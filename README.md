@@ -55,10 +55,14 @@ Mission13
 2. **Backend Setup**:
    - Navigate to the `backend` directory.
    - Create a `.env` file and add your `OPENROUTER_API_KEY`.
+   - Lagay nyo to sa .env: OPENROUTER_API_KEY=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
    - Install required packages using:
      ```
      pip install -r requirements.txt
      ```
+   - then paganahin nyo yung backend bago mag frontent cd Mission13/backend/
+   - then lagay nyo python app.py (pag gumana na di niyo na need i click yung url na ibibigay nito kasi frontend na kayu)
+   -  sa frontend double click nyo lang yang index.html nyo sa frontend folder then rekta google na yans.
 
 3. **Frontend Setup**:
    - Navigate to the `frontend` directory.
