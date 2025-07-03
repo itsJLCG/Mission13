@@ -22,14 +22,14 @@ const Header = () => {
       <div className="flex gap-2">
         <Link
           to="/login"
-          className="px-4 py-2 border border-black rounded text-gray-900 font-semibold transition hover:bg-[#b8f772]"
+          className="px-4 py-2 text-gray-900 font-semibold transition"
           style={{ fontFamily: 'Lexend Deca, sans-serif' }}
         >
           Login
         </Link>
         <Link
           to="/signup"
-          className="px-4 py-2 border border-black rounded text-gray-900 font-semibold transition hover:bg-[#b8f772]"
+          className="px-3 py-2 bg-black text-white border border-black rounded-lg text-gray-900 font-semibold transition hover:bg-[#b8f772]"
           style={{ fontFamily: 'Lexend Deca, sans-serif' }}
         >
           Sign Up
