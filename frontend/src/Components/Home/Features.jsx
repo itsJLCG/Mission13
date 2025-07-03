@@ -1,4 +1,6 @@
 import React from 'react'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 
 // Example icon imports (replace with your actual image files)
 import icon1 from '../../assets/city.png'
@@ -60,6 +62,10 @@ const features = [
 ]
 
 const Features = () => {
+  React.useEffect(() => {
+    AOS.init({ duration: 900 })
+  }, [])
+
   return (
     <section className="max-w-6xl mx-auto my-10 px-10">
       {/* Google Fonts */}
@@ -70,21 +76,23 @@ const Features = () => {
       <h1
         className="text-4xl font-extrabold mb-2"
         style={{ fontFamily: 'Poppins, sans-serif', color: '#020202' }}
+        data-aos="fade-down"
       >
         Key Features
       </h1>
       <p
         className="mb-8"
         style={{ fontFamily: 'Nunito Sans, sans-serif', color: '#020202' }}
+        data-aos="fade-up"
       >
         Mission13 combines AI technology, gamification, and impact tracking to
         make climate action accessible and engaging for everyone.
       </p>
       <div className="grid md:grid-cols-2 gap-10">
-        {features.map((feature) => (
+        {features.map((feature, idx) => (
           <div
             key={feature.title}
-            className="flex flex-col items-start rounded-2xl p-5 shadow transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
+            className="feature-card flex flex-col items-start rounded-2xl p-5 shadow transition-transform duration-300"
             style={{
               background: feature.bg,
               color: feature.color,
@@ -93,11 +101,13 @@ const Features = () => {
               maxWidth: 500,
               cursor: 'pointer',
             }}
+            data-aos="zoom-in"
+            data-aos-delay={idx * 100}
           >
             <img
               src={feature.icon}
               alt={feature.title + ' icon'}
-              className="w-14 h-12 mb-2"
+              className="w-14 h-12 mb-2 feature-icon"
               style={{ objectFit: 'contain' }}
             />
             <h3
@@ -115,6 +125,38 @@ const Features = () => {
           </div>
         ))}
       </div>
+      {/* Custom hover animation styles */}
+      <style>
+        {`
+          .feature-card {
+            transition:
+              transform 0.35s cubic-bezier(.4,2,.6,.9),
+              box-shadow 0.35s cubic-bezier(.4,2,.6,.9);
+          }
+          .feature-card:hover {
+            animation: pulse-lift 0.6s;
+            z-index: 2;
+          }
+          @keyframes pulse-lift {
+            0% {
+              transform: scale(1) translateY(0);
+              box-shadow: 0 4px 16px 0 #b8f77233, 0 1px 4px 0 #02020211;
+            }
+            40% {
+              transform: scale(1.08) translateY(-18px);
+              box-shadow: 0 24px 48px 0 #b8f77255, 0 4px 16px 0 #02020222;
+            }
+            60% {
+              transform: scale(1.04) translateY(-12px);
+              box-shadow: 0 18px 36px 0 #b8f77244, 0 3px 12px 0 #02020218;
+            }
+            100% {
+              transform: scale(1.07) translateY(-18px);
+              box-shadow: 0 24px 48px 0 #b8f77255, 0 4px 16px 0 #02020222;
+            }
+          }
+        `}
+      </style>
     </section>
   )
 }
