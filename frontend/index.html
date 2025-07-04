@@ -1,99 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mission13 - AI Powered Eco Challenge</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="src/assets/css/main.css">
-    <link rel="stylesheet" href="src/assets/css/chat.css">
-</head>
-<body>
-    <div class="app-container">
-        <header>
-            <div class="logo">
-                <i class="fas fa-leaf"></i>
-                <h1>Mission13</h1>
-            </div>
-            <p class="motto">AI Powered Eco Challenge for Climate Action</p>
-        </header>
-
-        <main>
-            <div class="dashboard">
-                <div class="user-profile">
-                    <div class="avatar">
-                        <i class="fas fa-user-circle"></i>
-                    </div>
-                    <div class="user-stats">
-                        <h3>Eco Warrior</h3>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: 35%"></div>
-                        </div>
-                        <span class="level">Level 3</span>
-                        <div class="points">
-                            <i class="fas fa-star"></i>
-                            <span>350 points</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="daily-challenge">
-                    <h2>Today's Climate Challenge</h2>
-                    <div class="challenge-card" id="challenge-card">
-                        <div class="challenge-loading" id="challenge-loading">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <p>Loading today's challenge...</p>
-                        </div>
-                        <div class="challenge-content" id="challenge-content" style="display: none;">
-                            <div class="challenge-header">
-                                <div class="challenge-icon" id="challenge-icon">
-                                    <i class="fas fa-leaf"></i>
-                                </div>
-                                <div class="challenge-timer" id="challenge-timer">
-                                    <div class="timer-display">
-                                        <span class="timer-label">Time Remaining:</span>
-                                        <span class="timer-value" id="timer-value">--:--:--</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="challenge-details">
-                                <h3 id="challenge-title">Loading...</h3>
-                                <p id="challenge-description">Loading challenge details...</p>
-                                <div class="challenge-actions">
-                                    <div class="reward">
-                                        <span id="challenge-points">+0 points</span>
-                                    </div>
-                                    <button class="complete-btn" id="complete-btn">Complete Challenge</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="chat-container">
-                <div class="chat-header">
-                    <h2><i class="fas fa-robot"></i> Eco AI Assistant</h2>
-                </div>
-                <div class="chat-messages" id="chat-messages">
-                    <!-- Messages will be added here by JavaScript -->
-                </div>
-                <div class="chat-input">
-                    <input type="text" id="user-input" placeholder="Type your message here...">
-                    <button id="send-btn">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-            </div>
-        </main>
-
-        <footer>
-            <p>&copy; 2025 Mission13 - Making the world greener one challenge at a time</p>
-        </footer>
-    </div>
-
-    <script src="src/assets/js/app.js"></script>
-    <script src="src/assets/js/chat.js"></script>
-    <script src="src/assets/js/challenges.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
