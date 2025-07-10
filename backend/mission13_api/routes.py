@@ -9,6 +9,15 @@ from daily_challenge import daily_challenge_manager
 
 api_blueprint = Blueprint('api', __name__, url_prefix='/api')
 
+@api_blueprint.route('/health', methods=['GET'])
+def health_check():
+    """Health check endpoint for frontend connection testing"""
+    return jsonify({
+        "status": "healthy",
+        "message": "Mission13 API is running",
+        "timestamp": "2025-07-06"
+    }), 200
+
 @api_blueprint.route('/chat', methods=['POST'])
 def chat():
     data = request.json
@@ -25,37 +34,35 @@ def chat():
 
 @api_blueprint.route('/challenges', methods=['GET'])
 def challenges():
+    """Get challenges (returns current daily challenge)"""
     try:
-        # Get the current daily challenge
         daily_challenge = daily_challenge_manager.get_daily_challenge()
-        
-        # Return as a list with the single daily challenge
-        challenges_data = [daily_challenge]
-        
-        return jsonify(challenges_data), 200
+        return jsonify([daily_challenge]), 200
     except Exception as e:
-        return jsonify({'error': f'Failed to get daily challenge: {str(e)}'}), 500
+        return jsonify({'error': f'Failed to get challenges: {str(e)}'}), 500
 
 @api_blueprint.route('/daily-challenge', methods=['GET'])
 def daily_challenge():
     """Get the current daily challenge with countdown timer"""
     try:
         challenge = daily_challenge_manager.get_daily_challenge()
+        print(f"Serving AI-generated challenge: {challenge['title']} for {challenge['date']}")
         return jsonify(challenge), 200
     except Exception as e:
+        print(f"Error getting daily challenge: {e}")
         return jsonify({'error': f'Failed to get daily challenge: {str(e)}'}), 500
 
 @api_blueprint.route('/generate-new-challenge', methods=['POST'])
 def generate_new_challenge():
-    """Force generate a new daily challenge (for testing purposes)"""
+    """Force generate a new daily challenge (for testing)"""
     try:
-        import os
-        # Remove the existing challenge file to force regeneration
-        challenges_file = os.path.join(os.path.dirname(__file__), '..', 'daily_challenges.json')
-        if os.path.exists(challenges_file):
-            os.remove(challenges_file)
+        # Clear current challenge to force regeneration
+        daily_challenge_manager.current_challenge = None
+        daily_challenge_manager.challenge_date = None
         
         challenge = daily_challenge_manager.get_daily_challenge()
+        print(f"Generated new challenge: {challenge['title']}")
         return jsonify(challenge), 200
     except Exception as e:
+        print(f"Error generating new challenge: {e}")
         return jsonify({'error': f'Failed to generate new challenge: {str(e)}'}), 500
