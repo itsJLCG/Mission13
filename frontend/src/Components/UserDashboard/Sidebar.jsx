@@ -1,68 +1,132 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
+// Import icons from react-icons
+import { AiOutlineHome } from 'react-icons/ai'
+import { MdOutlineEmojiEvents } from 'react-icons/md'
+import { BsChatDots } from 'react-icons/bs'
+import { IoGameControllerOutline } from 'react-icons/io5' // New game icon
 
 const navItems = [
-  { name: 'Dashboard', path: '/dashboard', icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8v-10h-8v10zm0-18v6h8V3h-8z"/>
-      </svg>
-    )
+  {
+    name: 'Home',
+    path: '/dashboard',
+    icon: <AiOutlineHome className="w-6 h-6" />,
   },
-  { name: 'Games', path: '/games', icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path d="M17 17a4 4 0 100-8 4 4 0 000 8zM7 7a4 4 0 100-8 4 4 0 000 8zm0 10a4 4 0 100-8 4 4 0 000 8zm10 0a4 4 0 100-8 4 4 0 000 8z"/>
-      </svg>
-    )
+  {
+    name: 'Games',
+    path: '/game',
+    icon: <IoGameControllerOutline className="w-6 h-6" />,
   },
-  { name: 'Chatbot', path: '/chatbot', icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path d="M12 22c4.418 0 8-3.134 8-7V7a8 8 0 10-16 0v8c0 3.866 3.582 7 8 7z"/>
-        <circle cx="8" cy="11" r="1.5" fill="currentColor"/>
-        <circle cx="16" cy="11" r="1.5" fill="currentColor"/>
-      </svg>
-    )
+  {
+    name: 'Chatbot',
+    path: '/chatbot',
+    icon: <BsChatDots className="w-6 h-6" />,
   },
 ]
 
-const Sidebar = ({ open, setOpen }) => {
+export default function Sidebar({ children }) {
+  const [open, setOpen] = useState(false) // Changed from true to false
+
   return (
-    <>
-      {/* Overlay for mobile */}
-      <div
-        className={`fixed inset-0 bg-black/30 z-30 transition-opacity md:hidden ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
-        onClick={() => setOpen(false)}
-        aria-hidden={!open}
-      />
+    <div className="flex flex-row">
+      {/* Sidebar */}
       <aside
         className={`
-          bg-[#204d36] text-white w-64 min-h-screen flex flex-col py-8 px-4
-          fixed z-40 top-0 left-0 transition-transform duration-200
-          ${open ? 'translate-x-0' : '-translate-x-full'}
-          md:static md:translate-x-0 md:z-20
+          fixed top-4 left-0 z-40 h-[calc(100vh-2rem)] bg-[#020202]
+          flex flex-col items-center py-8
+          transition-all duration-300
+          ${open ? 'w-56 px-6' : 'w-20 px-3'}
+          rounded-[40px] shadow-lg
+          margin-left-4
+          ${open ? 'ml-0' : 'ml-5'}
         `}
+        style={{ borderRadius: '40px' }}
       >
-        <div className="mb-10 text-2xl font-bold font-display text-lime-400 px-2">
-          Mission13
-        </div>
-        <nav className="flex flex-col gap-2">
-          {navItems.map(item => (
+        {/* Toggle Button */}
+        <button
+          className={`
+            mb-8 p-2 rounded-full bg-white text-[#111c4e] shadow
+            transition-transform duration-300
+            ${open ? 'self-end' : 'self-center'}
+          `}
+          onClick={() => setOpen((prev) => !prev)}
+          aria-label={open ? 'Collapse sidebar' : 'Expand sidebar'}
+        >
+          <svg
+            className={`w-6 h-6 transform transition-transform duration-300 ${open ? '' : 'rotate-180'}`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        {/* Logo/Avatar - Only show when open */}
+        {open && (
+          <div className="flex justify-center items-center mb-10 w-full transition-all duration-300">
+            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg">
+              <span className="text-[#b8f772] font-bold text-xl">A</span>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation */}
+        <nav className="flex flex-col gap-6 w-full items-center">
+          {navItems.map((item) => (
             <NavLink
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition 
-                ${isActive ? 'bg-lime-400 text-[#204d36]' : 'hover:bg-lime-600/30'}`
+                `
+                  group flex items-center gap-4 w-full
+                  px-3 py-3 my-1 rounded-2xl transition-all duration-200
+                  ${isActive
+                    ? 'bg-white text-[#b8f772] shadow'
+                    : 'text-gray-200 hover:bg-white hover:text-[#b8f772] hover:shadow-lg'}
+                  ${open ? 'justify-start' : 'justify-center'}
+                  relative
+                `
               }
-              onClick={() => setOpen(false)}
+              title={!open ? item.name : undefined}
             >
-              {item.icon}
-              <span>{item.name}</span>
+              <span className="flex items-center justify-center">
+                {item.icon}
+              </span>
+              {open && (
+                <span className="font-semibold text-base">{item.name}</span>
+              )}
+              {/* Tooltip */}
+              {!open && (
+                <span className="absolute left-16 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-50 whitespace-nowrap">
+                  {item.name}
+                </span>
+              )}
             </NavLink>
           ))}
         </nav>
       </aside>
-    </>
+
+      {/* Main content area */}
+      <main
+        className={`
+          flex-1 transition-all duration-300
+          ${open ? 'ml-56' : 'ml-20'}
+          p-8
+        `}
+      >
+        {children}
+      </main>
+
+      {/* Extra styles for icon glow/hover */}
+      <style>
+        {`
+          .group:hover {
+            box-shadow: 0 0 0 4px #fff3, 0 2px 8px #0004;
+          }
+        `}
+      </style>
+    </div>
   )
 }
-
-export default Sidebar
