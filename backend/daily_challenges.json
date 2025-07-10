@@ -1,13 +1,4 @@
 {
-  "last_generated": "2025-07-02T01:52:55.287164",
-  "current_challenge": {
-    "id": "daily_20250702",
-    "title": "Reduce Energy Consumption",
-    "description": "Turn off all unnecessary lights and electronics for the day. Unplug devices when not in use.",
-    "impact": "Reducing energy consumption helps decrease carbon emissions and fights climate change.",
-    "difficulty": "Easy",
-    "generated_at": "2025-07-02T01:52:57.314319",
-    "expires_at": "2025-07-03T00:00:00",
-    "type": "daily"
-  }
+  "last_generated": null,
+  "current_challenge": null
 }
