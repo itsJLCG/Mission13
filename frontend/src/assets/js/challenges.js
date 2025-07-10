@@ -22,7 +22,7 @@ class DailyChallengeManager {
             }
             
             this.challenge = await response.json();
-            console.log('Loaded challenge:', this.challenge);
+            console.log('Loaded AI-generated challenge:', this.challenge);
             this.displayChallenge();
             this.startCountdown();
             
@@ -37,26 +37,35 @@ class DailyChallengeManager {
     displayChallenge() {
         if (!this.challenge) return;
 
-        // Update challenge content
+        // Update challenge content with AI-generated data
         const titleElement = document.getElementById('challenge-title');
         const descriptionElement = document.getElementById('challenge-description');
         const pointsElement = document.getElementById('challenge-points');
+        const difficultyElement = document.getElementById('challenge-difficulty');
+        const categoryElement = document.getElementById('challenge-category');
+        const impactElement = document.getElementById('challenge-impact');
 
         if (titleElement) titleElement.textContent = this.challenge.title;
         if (descriptionElement) descriptionElement.textContent = this.challenge.description;
-        if (pointsElement) pointsElement.textContent = `+50 points`; // Default points
+        if (pointsElement) pointsElement.textContent = `+${this.challenge.points || 50} points`;
+        if (difficultyElement) difficultyElement.textContent = this.challenge.difficulty || 'Medium';
+        if (categoryElement) categoryElement.textContent = this.challenge.category || 'sustainability';
+        if (impactElement) impactElement.textContent = this.challenge.impact || 'Helps protect the environment';
 
-        // Update icon based on difficulty or category
+        // Update icon based on category
         const iconElement = document.querySelector('#challenge-icon i');
         if (iconElement) {
-            const difficultyIcons = {
-                'Easy': 'fas fa-leaf',
-                'Medium': 'fas fa-recycle',
-                'Hard': 'fas fa-tree',
-                'default': 'fas fa-leaf'
+            const categoryIcons = {
+                'water': 'fas fa-tint',
+                'energy': 'fas fa-bolt',
+                'waste': 'fas fa-recycle',
+                'transport': 'fas fa-bicycle',
+                'food': 'fas fa-leaf',
+                'lifestyle': 'fas fa-heart',
+                'default': 'fas fa-globe'
             };
             
-            const iconClass = difficultyIcons[this.challenge.difficulty] || difficultyIcons.default;
+            const iconClass = categoryIcons[this.challenge.category] || categoryIcons.default;
             iconElement.className = iconClass;
         }
 
@@ -83,11 +92,11 @@ class DailyChallengeManager {
         if (!timerElement) return;
 
         if (this.challenge && this.challenge.time_remaining) {
-            // Use the time remaining from the challenge
             let totalSeconds = this.challenge.time_remaining.total_seconds;
             
             if (totalSeconds <= 0) {
-                // Challenge expired, load new one
+                // Challenge expired, load new AI-generated challenge
+                console.log('Challenge expired, loading new AI challenge...');
                 this.loadDailyChallenge();
                 return;
             }
@@ -102,7 +111,7 @@ class DailyChallengeManager {
             // Decrease the time for next update
             this.challenge.time_remaining.total_seconds = totalSeconds - 1;
         } else {
-            // Fallback: calculate time until tomorrow midnight
+            // Fallback timer calculation
             const now = new Date();
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
@@ -137,13 +146,11 @@ class DailyChallengeManager {
         const completeBtn = document.getElementById('complete-btn');
         if (!completeBtn) return;
         
-        const originalText = completeBtn.textContent;
-        
         completeBtn.textContent = 'Completed!';
         completeBtn.disabled = true;
         completeBtn.classList.add('completed');
         
-        // Add points animation
+        // Add points animation with dynamic points
         this.showPointsAnimation();
         
         // Store completion in localStorage
@@ -159,10 +166,13 @@ class DailyChallengeManager {
         const pointsElement = document.getElementById('challenge-points');
         if (!pointsElement) return;
         
+        // Use dynamic points from challenge
+        const points = this.challenge?.points || 50;
+        
         // Create floating points animation
         const floatingPoints = document.createElement('div');
         floatingPoints.className = 'floating-points';
-        floatingPoints.textContent = '+50';
+        floatingPoints.textContent = `+${points}`;
         floatingPoints.style.cssText = `
             position: absolute;
             color: #2ecc71;
@@ -215,7 +225,7 @@ class DailyChallengeManager {
             challengeCard.innerHTML = `
                 <div class="challenge-error" style="text-align: center; padding: 40px;">
                     <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #e74c3c; margin-bottom: 20px;"></i>
-                    <h3>Unable to Load Challenge</h3>
+                    <h3>Unable to Load AI Challenge</h3>
                     <p>Please check your connection and try again.</p>
                     <button onclick="location.reload()" class="retry-btn" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px;">Retry</button>
                 </div>
@@ -236,6 +246,7 @@ class DailyChallengeManager {
             }
             
             this.challenge = await response.json();
+            console.log('Generated new AI challenge:', this.challenge);
             this.displayChallenge();
             this.startCountdown();
             
@@ -248,15 +259,14 @@ class DailyChallengeManager {
     }
 }
 
-// Initialize the daily challenge manager when the page loads
+// Initialize when page loads
 document.addEventListener('DOMContentLoaded', () => {
-    // Only initialize if we're on a page with challenge elements
     if (document.getElementById('challenge-card')) {
         window.dailyChallengeManager = new DailyChallengeManager();
     }
 });
 
-// Check if challenge was already completed today
+// Check completion status
 document.addEventListener('DOMContentLoaded', () => {
     const today = new Date().toDateString();
     const completed = localStorage.getItem(`challenge_completed_${today}`);
@@ -273,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Global function for testing new challenge generation
+// Global function for testing
 function generateNewChallenge() {
     if (window.dailyChallengeManager) {
         window.dailyChallengeManager.generateNewChallenge();
