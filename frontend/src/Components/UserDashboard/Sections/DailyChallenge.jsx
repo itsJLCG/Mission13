@@ -28,44 +28,53 @@ function FeedbackModal({ open, onClose, onSubmit }) {
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-[#f1f3f0] rounded-2xl p-8 w-full max-w-md shadow-lg relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="bg-white rounded-3xl p-8 w-full max-w-lg shadow-2xl relative border border-[#b8f772]/20">
         <button
-          className="absolute top-3 right-3 text-[#020202] hover:text-[#b8f772] text-xl font-bold"
+          className="absolute top-6 right-6 text-[#020202] hover:text-[#b8f772] text-2xl font-bold transition-colors"
           onClick={onClose}
           aria-label="Close"
         >×</button>
-        <h2 className="text-xl font-bold mb-4 text-[#191b40]">Submit Proof</h2>
+        <h2 className="text-2xl font-bold mb-6 text-[#191b40]" style={{ fontFamily: 'Lexend Deca, sans-serif' }}>
+          Submit Challenge Proof
+        </h2>
         <form
           onSubmit={e => {
             e.preventDefault()
             onSubmit({ desc, img })
           }}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-6"
         >
-          <label className="font-semibold text-[#191b40]">
-            Description
+          <div>
+            <label className="block font-semibold text-[#191b40] mb-3" style={{ fontFamily: 'Nunito Sans, sans-serif' }}>
+              Description
+            </label>
             <textarea
-              className="mt-1 w-full rounded-lg border border-[#b8f772] p-2 bg-white"
-              rows={3}
+              className="w-full rounded-xl border-2 border-[#b8f772]/30 p-4 bg-[#f8f9fa] focus:border-[#b8f772] focus:bg-white transition-all resize-none"
+              rows={4}
               value={desc}
               onChange={e => setDesc(e.target.value)}
+              placeholder="Describe how you completed this challenge..."
               required
+              style={{ fontFamily: 'Nunito Sans, sans-serif' }}
             />
-          </label>
-          <label className="font-semibold text-[#191b40]">
-            Proof Image
+          </div>
+          <div>
+            <label className="block font-semibold text-[#191b40] mb-3" style={{ fontFamily: 'Nunito Sans, sans-serif' }}>
+              Proof Image
+            </label>
             <input
               type="file"
               accept="image/*"
-              className="block mt-1"
+              className="w-full p-4 border-2 border-dashed border-[#b8f772]/30 rounded-xl bg-[#f8f9fa] hover:border-[#b8f772] transition-colors"
               onChange={e => setImg(e.target.files[0])}
               required
             />
-          </label>
+          </div>
           <button
             type="submit"
-            className="mt-2 px-4 py-2 rounded-full bg-[#b8f772] text-[#191b40] font-bold hover:bg-[#d6ff8f] transition"
+            className="w-full py-4 rounded-xl bg-[#b8f772] text-[#191b40] font-bold hover:bg-[#a3e85c] hover:scale-[1.02] transition-all shadow-lg"
+            style={{ fontFamily: 'Lexend Deca, sans-serif' }}
           >
             Submit Proof
           </button>
@@ -79,26 +88,61 @@ function FeedbackModal({ open, onClose, onSubmit }) {
 function SuccessModal({ open, onClose }) {
   if (!open) return null
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-[#f1f3f0] rounded-2xl p-8 w-full max-w-xs shadow-lg flex flex-col items-center relative">
-        <button
-          className="absolute top-3 right-3 text-[#020202] hover:text-[#b8f772] text-xl font-bold"
-          onClick={onClose}
-          aria-label="Close"
-        >×</button>
-        <div className="flex flex-col items-center">
-          <span className="text-5xl text-[#b8f772] mb-2">✔️</span>
-          <span className="text-lg font-bold text-[#191b40] mb-2">Challenge Completed!</span>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="bg-white rounded-3xl p-10 w-full max-w-sm shadow-2xl flex flex-col items-center relative border border-[#b8f772]/20">
+        <div className="absolute transform -translate-x-1/2 -top-8 left-1/2">
+          <div className="w-16 h-16 bg-[#b8f772] rounded-full flex items-center justify-center shadow-lg">
+            <span className="text-3xl">🎉</span>
+          </div>
+        </div>
+        <div className="flex flex-col items-center mt-8">
+          <span className="text-2xl font-bold text-[#191b40] mb-3" style={{ fontFamily: 'Lexend Deca, sans-serif' }}>
+            Challenge Completed!
+          </span>
+          <p className="text-center text-[#191b40] opacity-80 mb-6" style={{ fontFamily: 'Nunito Sans, sans-serif' }}>
+            Great job! You've earned points for making a positive environmental impact.
+          </p>
           <button
-            className="mt-2 px-4 py-2 rounded-full bg-[#b8f772] text-[#191b40] font-bold hover:bg-[#d6ff8f] transition"
+            className="px-8 py-3 rounded-xl bg-[#b8f772] text-[#191b40] font-bold hover:bg-[#a3e85c] transition-all"
             onClick={onClose}
+            style={{ fontFamily: 'Lexend Deca, sans-serif' }}
           >
-            Close
+            Continue
           </button>
         </div>
       </div>
     </div>
   )
+}
+
+// Function to get difficulty color and style
+function getDifficultyStyle(difficulty) {
+  switch (difficulty?.toLowerCase()) {
+    case 'easy':
+      return {
+        bg: 'bg-gradient-to-r from-green-400 to-green-500',
+        text: 'text-white',
+        icon: '🌱'
+      }
+    case 'medium':
+      return {
+        bg: 'bg-gradient-to-r from-yellow-400 to-orange-400',
+        text: 'text-white',
+        icon: '⚡'
+      }
+    case 'hard':
+      return {
+        bg: 'bg-gradient-to-r from-red-400 to-red-500',
+        text: 'text-white',
+        icon: '🔥'
+      }
+    default:
+      return {
+        bg: 'bg-gradient-to-r from-gray-400 to-gray-500',
+        text: 'text-white',
+        icon: '📊'
+      }
+  }
 }
 
 // Function to get icon based on challenge title/type
@@ -107,52 +151,35 @@ function getChallengeIcon(title) {
   
   if (titleLower.includes('recycle') || titleLower.includes('waste')) {
     return (
-      <svg className="w-6 h-6 text-[#b8f772]" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-      </svg>
+      <div className="w-12 h-12 bg-gradient-to-br from-[#b8f772] to-[#a3e85c] rounded-2xl flex items-center justify-center shadow-lg">
+        <svg className="text-white w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+        </svg>
+      </div>
     )
   } else if (titleLower.includes('water') || titleLower.includes('save')) {
     return (
-      <svg className="w-6 h-6 text-[#b8f772]" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8zM12 20c-3.35 0-6-2.57-6-5.2 0-2.34 1.95-5.44 6-9.14 4.05 3.7 6 6.8 6 9.14 0 2.63-2.65 5.2-6 5.2z"/>
-      </svg>
+      <div className="flex items-center justify-center w-12 h-12 shadow-lg bg-gradient-to-br from-blue-400 to-blue-500 rounded-2xl">
+        <svg className="text-white w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8zM12 20c-3.35 0-6-2.57-6-5.2 0-2.34 1.95-5.44 6-9.14 4.05 3.7 6 6.8 6 9.14 0 2.63-2.65 5.2-6 5.2z"/>
+        </svg>
+      </div>
     )
   } else if (titleLower.includes('energy') || titleLower.includes('electric') || titleLower.includes('power')) {
     return (
-      <svg className="w-6 h-6 text-[#b8f772]" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M14.69 2.21L4.33 11.49c-.64.58-.28 1.65.58 1.73L13 14l-4.85 6.76c-.22.31-.19.74.08 1.01.3.3.77.31 1.08.02l10.36-9.28c.64-.58.28-1.65-.58-1.73L11 10l4.85-6.76c.22-.31.19-.74-.08-1.01-.3-.3-.77-.31-1.08-.02z"/>
-      </svg>
-    )
-  } else if (titleLower.includes('transport') || titleLower.includes('bike') || titleLower.includes('walk')) {
-    return (
-      <svg className="w-6 h-6 text-[#b8f772]" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M15.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM5 12c-2.8 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5zm0 8.5c-1.9 0-3.5-1.6-3.5-3.5s1.6-3.5 3.5-3.5 3.5 1.6 3.5 3.5-1.6 3.5-3.5 3.5zm14.8-8.5c-1.8 0-3.3-1.2-3.8-2.8l-1.7-5.3C14.1 3.1 13.4 2.5 12.6 2.5H8.8c-.8 0-1.5.6-1.7 1.4L5.4 9.2c-.3.8.2 1.6 1 1.9.8.3 1.6-.2 1.9-1l1.7-5.3h1.6L12.3 7c.3.8 1.1 1.4 1.9 1.4h3.6c.8 0 1.5-.6 1.7-1.4l1.7-5.3c.3-.8-.2-1.6-1-1.9-.8-.3-1.6.2-1.9 1l-1.7 5.3h-1.6l.7-2.2c.3-.8-.2-1.6-1-1.9-.8-.3-1.6.2-1.9 1l-.7 2.2h-1.6l1.7-5.3c.3-.8-.2-1.6-1-1.9-.8-.3-1.6.2-1.9 1L8.1 3.9c-.3.8.2 1.6 1 1.9.8.3 1.6-.2 1.9-1l1.7-5.3h1.6l-.7 2.2c-.3.8.2 1.6 1 1.9.8.3 1.6-.2 1.9-1l.7-2.2h1.6l-1.7 5.3c-.3.8.2 1.6 1 1.9.8.3 1.6-.2 1.9-1l1.7-5.3h3.6c.8 0 1.5.6 1.7 1.4l1.7 5.3c.5 1.6 2 2.8 3.8 2.8 2.8 0 5-2.2 5-5s-2.2-5-5-5zm0 8.5c-1.9 0-3.5-1.6-3.5-3.5s1.6-3.5 3.5-3.5 3.5 1.6 3.5 3.5-1.6 3.5-3.5 3.5z"/>
-      </svg>
-    )
-  } else if (titleLower.includes('plant') || titleLower.includes('garden') || titleLower.includes('grow')) {
-    return (
-      <svg className="w-6 h-6 text-[#b8f772]" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12 22c4.97 0 9-4.03 9-9-4.97 0-9 4.03-9 9zM5.6 10.25c0-1.38 1.12-2.5 2.5-2.5.53 0 1.01.16 1.42.44l-.02.19c0 1.38-1.12 2.5-2.5 2.5-.53 0-1.01-.16-1.42-.44l.02-.19zM12 5.25c0-1.38 1.12-2.5 2.5-2.5.53 0 1.01.16 1.42.44l-.02.19c0 1.38-1.12 2.5-2.5 2.5-.53 0-1.01-.16-1.42-.44l.02-.19z"/>
-      </svg>
-    )
-  } else if (titleLower.includes('food') || titleLower.includes('eat') || titleLower.includes('organic')) {
-    return (
-      <svg className="w-6 h-6 text-[#b8f772]" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M8.1 13.34l2.83-2.83L3.91 3.5c-.78-.78-2.05-.78-2.83 0l-.01.01c-.78.78-.78 2.05 0 2.83l7.02 7.02zm6.78-1.81c1.53.71 3.68.21 5.27-1.38 1.91-1.91 2.28-4.65.81-6.12-1.46-1.46-4.2-1.1-6.12.81-1.59 1.59-2.09 3.74-1.38 5.27L3.7 19.87l1.41 1.41L12 14.41l6.88 6.88 1.41-1.41L13.41 13l1.47-1.47z"/>
-      </svg>
-    )
-  } else if (titleLower.includes('clean') || titleLower.includes('pollution')) {
-    return (
-      <svg className="w-6 h-6 text-[#b8f772]" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-      </svg>
+      <div className="flex items-center justify-center w-12 h-12 shadow-lg bg-gradient-to-br from-yellow-400 to-orange-400 rounded-2xl">
+        <svg className="text-white w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M14.69 2.21L4.33 11.49c-.64.58-.28 1.65.58 1.73L13 14l-4.85 6.76c-.22.31-.19.74.08 1.01.3.3.77.31 1.08.02l10.36-9.28c.64-.58.28-1.65-.58-1.73L11 10l4.85-6.76c.22-.31.19-.74-.08-1.01-.3-.3-.77-.31-1.08-.02z"/>
+        </svg>
+      </div>
     )
   } else {
-    // Default eco-friendly icon
     return (
-      <svg className="w-6 h-6 text-[#b8f772]" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/>
-      </svg>
+      <div className="w-12 h-12 bg-gradient-to-br from-[#b8f772] to-[#a3e85c] rounded-2xl flex items-center justify-center shadow-lg">
+        <svg className="text-white w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/>
+        </svg>
+      </div>
     )
   }
 }
@@ -160,14 +187,14 @@ function getChallengeIcon(title) {
 // ChallengeCard
 function ChallengeCard({ challenge, onFeedback, timeLeft, completed }) {
   const [showPointsAnimation, setShowPointsAnimation] = useState(false)
+  const difficultyStyle = getDifficultyStyle(challenge.difficulty)
   
   useEffect(() => {
     if (completed) {
-      // Trigger points animation when challenge is completed
       setShowPointsAnimation(true)
       const timer = setTimeout(() => {
         setShowPointsAnimation(false)
-      }, 3000) // Animation lasts 3 seconds
+      }, 3000)
       return () => clearTimeout(timer)
     }
   }, [completed])
@@ -175,73 +202,159 @@ function ChallengeCard({ challenge, onFeedback, timeLeft, completed }) {
   if (!challenge) return null
   
   return (
-    <div
-      className={`
-        bg-white rounded-2xl shadow-md p-6 flex flex-col gap-4 transition relative
-        border-2 border-transparent
-        ${completed ? 'opacity-90 bg-[#f1f3f0]' : 'hover:border-[#b8f772] hover:shadow-lg'}
-      `}
-      style={{ minWidth: 260, fontFamily: 'Poppins, Lexend Deca, Nunito Sans, sans-serif' }}
-    >
-      {/* Timer - Upper Right */}
-      <div className="absolute top-4 right-4 flex items-center gap-1 text-xs text-[#191b40] font-semibold">
-        <svg className="w-4 h-4" fill="none" stroke="#b8f772" strokeWidth="2" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10" stroke="#b8f772" />
-          <path d="M12 6v6l4 2" stroke="#191b40" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-        {timeLeft}
-      </div>
+    <div className="relative">
+      {/* Main Card */}
+      <div
+        className={`
+          bg-white rounded-3xl shadow-xl p-8 transition-all duration-300 relative overflow-hidden
+          border border-[#b8f772]/20
+          ${completed ? 'opacity-95 bg-gradient-to-br from-white to-[#f8f9fa]' : 'hover:shadow-2xl hover:scale-[1.02]'}
+        `}
+        style={{ fontFamily: 'Nunito Sans, sans-serif' }}
+      >
+        {/* Background Pattern */}
+        <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
+          <svg viewBox="0 0 100 100" className="w-full h-full">
+            <circle cx="50" cy="50" r="40" fill="currentColor" className="text-[#b8f772]"/>
+          </svg>
+        </div>
 
-      {/* Points Animation */}
-      {showPointsAnimation && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-          <div className="animate-bounce">
-            <div className="bg-[#b8f772] text-[#191b40] px-4 py-2 rounded-full font-bold text-lg shadow-lg animate-pulse">
-              +{challenge.points || 50} pts! 🎉
+        {/* Header Section */}
+        <div className="flex items-start justify-between mb-6">
+          {/* Left: Icon and Title */}
+          <div className="flex items-center flex-1 gap-4">
+            {getChallengeIcon(challenge.title)}
+            <div>
+              <div className="flex items-center gap-3">
+                <h3 
+                  className="text-2xl font-bold text-[#191b40] leading-tight"
+                  style={{ fontFamily: 'Lexend Deca, sans-serif' }}
+                >
+                  {challenge.title}
+                </h3>
+                {completed && (
+                  <div className="w-8 h-8 bg-[#b8f772] rounded-full flex items-center justify-center">
+                    <span className="text-sm text-white">✓</span>
+                  </div>
+                )}
+              </div>
+              <p className="text-[#191b40] opacity-60 text-sm mt-1">Today's Climate Action</p>
             </div>
           </div>
         </div>
-      )}
 
-      {/* Title with Icon and Completed Check */}
-      <div className="flex items-center gap-2 pr-16">
-        {/* Challenge Icon */}
-        <div className="flex-shrink-0">
-          {getChallengeIcon(challenge.title)}
+        {/* Timer and Difficulty Badges */}
+        <div className="flex gap-4 mb-6">
+          {/* Timer Badge */}
+          <div className="flex items-center gap-3 bg-gradient-to-r from-[#f8f9fa] to-white rounded-2xl px-4 py-3 border border-[#b8f772]/20 shadow-sm">
+            <div className="w-10 h-10 bg-gradient-to-br from-[#b8f772] to-[#a3e85c] rounded-xl flex items-center justify-center">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v6l4 2"/>
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-[#191b40] opacity-60">Time Remaining</p>
+              <p className="text-lg font-bold text-[#191b40]" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                {timeLeft}
+              </p>
+            </div>
+          </div>
+
+          {/* Difficulty Badge */}
+          {challenge.difficulty && (
+            <div className="flex items-center gap-3 bg-gradient-to-r from-[#f8f9fa] to-white rounded-2xl px-4 py-3 border border-[#b8f772]/20 shadow-sm">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${difficultyStyle.bg}`}>
+                <span className="text-lg">{difficultyStyle.icon}</span>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-[#191b40] opacity-60">Difficulty</p>
+                <p className="text-lg font-bold text-[#191b40]">
+                  {challenge.difficulty}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
-        <span className="text-lg font-bold text-[#191b40]">{challenge.title}</span>
-        {completed && (
-          <span className="ml-2 text-[#b8f772] text-xl" title="Completed">✔️</span>
+
+        {/* Description */}
+        <div className="mb-6">
+          <h4 className="text-sm font-semibold text-[#191b40] mb-3 opacity-80">Challenge Description</h4>
+          <p className="text-[#191b40] leading-relaxed text-lg">
+            {challenge.description}
+          </p>
+        </div>
+
+        {/* Impact Section */}
+        {challenge.impact && (
+          <div className="mb-8">
+            <div className="bg-gradient-to-r from-[#b8f772]/10 to-[#a3e85c]/10 rounded-2xl p-6 border-l-4 border-[#b8f772]">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#b8f772] to-[#a3e85c] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                  <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" className="text-white">
+                    <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z"/>
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h4 
+                    className="text-lg font-bold text-[#191b40] mb-3"
+                    style={{ fontFamily: 'Lexend Deca, sans-serif' }}
+                  >
+                    Environmental Impact
+                  </h4>
+                  <p className="text-[#191b40] leading-relaxed opacity-90">
+                    {challenge.impact}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
-      </div>
 
-      {/* Description */}
-      <div className="text-sm text-[#191b40] opacity-80 pr-4">
-        {challenge.description}
-      </div>
+        {/* Bottom Section */}
+        <div className="flex items-center justify-between">
+          {/* Points Display */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-12 h-12 shadow-lg bg-gradient-to-br from-yellow-400 to-orange-400 rounded-2xl">
+              <span className="text-xl text-white">🏆</span>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-[#191b40] opacity-60">Reward Points</p>
+              <p className="text-2xl font-bold text-[#191b40]">
+                +{challenge.points || 50}
+              </p>
+            </div>
+          </div>
 
-      {/* Bottom Section - Points and Button */}
-      <div className="flex items-center justify-between mt-4">
-        {/* Points Badge */}
-        <span className="px-3 py-1 rounded-full bg-[#b8f772] text-[#191b40] text-xs font-bold">
-          +{challenge.points || 50} pts
-        </span>
-        
-        {/* Challenge Button - Right Side */}
-        <button
-          className={`
-            px-6 py-2 rounded-full font-semibold text-[#191b40] transition
-            focus:outline-none
-            ${completed 
-              ? 'bg-[#b8f772] opacity-80 cursor-not-allowed' 
-              : 'bg-[#b8f772] hover:bg-[#d6ff8f] hover:scale-105 active:scale-95'
-            }
-          `}
-          onClick={completed ? undefined : onFeedback}
-          disabled={completed}
-        >
-          {completed ? 'Challenge Successful' : 'Accept Challenge'}
-        </button>
+          {/* Action Button */}
+          <button
+            className={`
+              px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg
+              ${completed 
+                ? 'bg-gradient-to-r from-gray-300 to-gray-400 text-gray-600 cursor-not-allowed' 
+                : 'bg-gradient-to-r from-[#b8f772] to-[#a3e85c] text-[#191b40] hover:shadow-xl hover:scale-105 active:scale-95'
+              }
+            `}
+            onClick={completed ? undefined : onFeedback}
+            disabled={completed}
+            style={{ fontFamily: 'Lexend Deca, sans-serif' }}
+          >
+            {completed ? '✅ Completed' : '🚀 Accept Challenge'}
+          </button>
+        </div>
+
+        {/* Points Animation Overlay */}
+        {showPointsAnimation && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/90 backdrop-blur-sm rounded-3xl">
+            <div className="text-center animate-bounce">
+              <div className="mb-4 text-6xl">🎉</div>
+              <div className="text-3xl font-bold text-[#191b40] mb-2" style={{ fontFamily: 'Lexend Deca, sans-serif' }}>
+                +{challenge.points || 50} Points!
+              </div>
+              <div className="text-lg text-[#191b40] opacity-80">Challenge Completed!</div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
@@ -256,8 +369,6 @@ export default function DailyChallenge({ onChallengeComplete }) {
   const [error, setError] = useState(null)
   const [completed, setCompleted] = useState(false)
   const [timerStopped, setTimerStopped] = useState(false)
-  const [proof, setProof] = useState({ img: null, desc: '' })
-  const [showProofModal, setShowProofModal] = useState(false)
 
   // Function to fetch a new challenge
   const fetchNewChallenge = () => {
@@ -278,12 +389,10 @@ export default function DailyChallenge({ onChallengeComplete }) {
       })
   }
 
-  // Initial fetch challenge on component mount
   useEffect(() => {
     fetchNewChallenge()
   }, [])
 
-  // Timer countdown with auto-fetch when time expires
   useEffect(() => {
     if (!challenge || timerStopped) return
     if (timeLeft <= 0) {
@@ -296,27 +405,6 @@ export default function DailyChallenge({ onChallengeComplete }) {
     return () => clearInterval(interval)
   }, [timeLeft, challenge, timerStopped])
 
-  const handleCompleteChallenge = () => {
-    if (onChallengeComplete) {
-      const completedChallenge = {
-        challenge,
-        proof,
-        completedAt: new Date().toISOString()
-      }
-      
-      onChallengeComplete(completedChallenge)
-      
-      // Update streak
-      streakManager.updateStreakOnChallenge()
-      
-      // Dispatch event to update header
-      window.dispatchEvent(new CustomEvent('streakUpdated'))
-    }
-    
-    setShowProofModal(false)
-    setProof({ img: null, desc: '' })
-  }
-
   const handleProofSubmit = ({ desc, img }) => {
     setModalOpen(false)
     setCompleted(true)
@@ -328,7 +416,6 @@ export default function DailyChallenge({ onChallengeComplete }) {
       completedAt: new Date(),
     }
     
-    // Notify parent component
     onChallengeComplete(completedChallenge)
     
     setTimeout(() => {
@@ -336,48 +423,58 @@ export default function DailyChallenge({ onChallengeComplete }) {
     }, 1500)
   }
 
-  const handleSuccessClose = () => {
-    setSuccessOpen(false)
-  }
-
   if (loading) {
     return (
-      <div className="bg-[#f1f3f0] rounded-3xl p-8 shadow-lg flex items-center justify-center min-h-[200px]">
-        <span className="text-[#191b40] font-bold">Loading challenge...</span>
+      <div className="bg-gradient-to-br from-white to-[#f8f9fa] rounded-3xl p-12 shadow-xl flex items-center justify-center min-h-[400px] border border-[#b8f772]/20">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#b8f772] border-t-transparent rounded-full animate-spin mb-6 mx-auto"></div>
+          <span className="text-xl font-bold text-[#191b40]" style={{ fontFamily: 'Lexend Deca, sans-serif' }}>
+            Loading Today's Challenge...
+          </span>
+        </div>
       </div>
     )
   }
 
   if (error || !challenge) {
     return (
-      <div className="bg-[#f1f3f0] rounded-3xl p-8 shadow-lg flex items-center justify-center min-h-[200px]">
-        <span className="text-red-600 font-bold">{error || "No challenge available."}</span>
+      <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-3xl p-12 shadow-xl flex items-center justify-center min-h-[400px] border border-red-200">
+        <div className="text-center">
+          <div className="mb-4 text-4xl">⚠️</div>
+          <span className="text-xl font-bold text-red-600" style={{ fontFamily: 'Lexend Deca, sans-serif' }}>
+            {error || "No challenge available"}
+          </span>
+        </div>
       </div>
     )
   }
 
   return (
-    <div>
-      {/* Daily Challenge Information - Only show when challenge is completed */}
+    <div className="space-y-8">
+      {/* Completion Banner */}
       {completed && (
-        <div className="bg-[#b8f772] rounded-xl p-4 mb-6 border-l-4 border-[#191b40]">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-[#191b40] font-bold text-sm">📅 Daily Challenge Info</span>
+        <div className="bg-gradient-to-r from-[#b8f772] to-[#a3e85c] rounded-2xl p-6 shadow-lg border border-[#b8f772]/30">
+          <div className="flex items-center gap-4">
+            <div className="text-3xl">🎯</div>
+            <div>
+              <h3 className="text-xl font-bold text-[#191b40]" style={{ fontFamily: 'Lexend Deca, sans-serif' }}>
+                Challenge Completed!
+              </h3>
+              <p className="text-[#191b40] opacity-90">
+                Great job! Come back tomorrow for a new environmental challenge.
+              </p>
+            </div>
           </div>
-          <p className="text-[#191b40] text-sm opacity-90">
-            Challenge completed! Come back tomorrow for a new one! 🌱
-          </p>
         </div>
       )}
 
-      <div className="bg-[#f1f3f0] rounded-3xl p-8 shadow-lg mb-8">
-        <ChallengeCard
-          challenge={challenge}
-          onFeedback={() => setModalOpen(true)}
-          timeLeft={formatTime(timeLeft > 0 ? timeLeft : 0)}
-          completed={completed}
-        />
-      </div>
+      {/* Challenge Card */}
+      <ChallengeCard
+        challenge={challenge}
+        onFeedback={() => setModalOpen(true)}
+        timeLeft={formatTime(timeLeft > 0 ? timeLeft : 0)}
+        completed={completed}
+      />
       
       <FeedbackModal
         open={modalOpen}
@@ -386,7 +483,7 @@ export default function DailyChallenge({ onChallengeComplete }) {
       />
       <SuccessModal
         open={successOpen}
-        onClose={handleSuccessClose}
+        onClose={() => setSuccessOpen(false)}
       />
     </div>
   )
