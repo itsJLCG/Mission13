@@ -4,23 +4,75 @@ import cityImg from '../assets/city.png'
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const navigate = useNavigate()
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
+    // Clear error when user starts typing
+    if (error) setError('')
   }
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    if (!form.email.trim()) {
+      setError('Email is required')
+      return false
+    }
+    if (!form.password) {
+      setError('Password is required')
+      return false
+    }
+    return true
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Handle login logic here
-    alert('Login submitted!')
+    
+    if (!validateForm()) {
+      return
+    }
+
+    setLoading(true)
+    setError('')
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        // Store user data in localStorage (or use a state management solution)
+        localStorage.setItem('user', JSON.stringify(data.user))
+        localStorage.setItem('isLoggedIn', 'true')
+        
+        // Redirect to dashboard or home page
+        navigate('/dashboard') // Change this to your desired route
+      } else {
+        setError(data.error || 'Login failed. Please try again.')
+      }
+    } catch (error) {
+      console.error('Login error:', error)
+      setError('Network error. Please check your connection and try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f1f3f0] relative">
       {/* Mission13 Logo Top Left */}
       <div
-        className="absolute top-6 left-8 flex items-center gap-2 z-10"
+        className="absolute z-10 flex items-center gap-2 top-6 left-8"
         style={{ fontFamily: 'Lexend Deca, sans-serif' }}
       >
         <span className="inline-block w-3 h-3 bg-[#b8f772] rounded-full"></span>
@@ -42,8 +94,8 @@ const Login = () => {
         <div className="md:w-1/2 bg-[#b8f772] flex flex-col justify-between items-center py-10 px-6 relative">
           <img src={cityImg} alt="City" className="w-64 mx-auto mb-8 drop-shadow-xl rounded-xl border-4 border-[#f1f3f0]" />
           <div className="text-center text-[#020202] mt-8">
-            <div className="font-semibold mb-2" style={{ fontFamily: 'Lexend Deca, sans-serif' }}>
-              Join Mission13’s climate movement
+            <div className="mb-2 font-semibold" style={{ fontFamily: 'Lexend Deca, sans-serif' }}>
+              Join Mission13's climate movement
             </div>
             <div className="text-xs opacity-80" style={{ fontFamily: 'Nunito Sans, sans-serif' }}>
               Every daily challenge builds a cleaner, more sustainable tomorrow
@@ -64,6 +116,14 @@ const Login = () => {
           >
             Log in to continue your climate action journey with Mission13.
           </p>
+
+          {/* Error Message */}
+          {error && (
+            <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 border border-red-400 rounded-lg">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
               <label
@@ -81,7 +141,8 @@ const Login = () => {
                 value={form.email}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 border border-[#b8f772] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#b8f772] transition bg-white text-[#020202]"
+                disabled={loading}
+                className="w-full px-4 py-2 border border-[#b8f772] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#b8f772] transition bg-white text-[#020202] disabled:opacity-50"
                 style={{ fontFamily: 'Nunito Sans, sans-serif' }}
               />
             </div>
@@ -101,7 +162,8 @@ const Login = () => {
                 value={form.password}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 border border-[#b8f772] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#b8f772] transition bg-white text-[#020202]"
+                disabled={loading}
+                className="w-full px-4 py-2 border border-[#b8f772] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#b8f772] transition bg-white text-[#020202] disabled:opacity-50"
                 style={{ fontFamily: 'Nunito Sans, sans-serif' }}
               />
             </div>
@@ -116,10 +178,18 @@ const Login = () => {
             </div>
             <button
               type="submit"
-              className="w-full py-3 bg-[#b8f772] hover:bg-[#020202] hover:text-[#f1f3f0] text-[#020202] font-bold rounded-lg transition shadow mt-2"
+              disabled={loading}
+              className="w-full py-3 bg-[#b8f772] hover:bg-[#020202] hover:text-[#f1f3f0] text-[#020202] font-bold rounded-lg transition shadow mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ fontFamily: 'Lexend Deca, sans-serif' }}
             >
-              Login
+              {loading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-4 h-4 border-2 border-current rounded-full border-t-transparent animate-spin"></div>
+                  Logging in...
+                </div>
+              ) : (
+                'Login'
+              )}
             </button>
           </form>
           <div className="mt-6 text-center text-[#020202] text-sm" style={{ fontFamily: 'Nunito Sans, sans-serif' }}>
@@ -141,7 +211,7 @@ const Login = () => {
             border-color: #b8f772;
             box-shadow: 0 0 0 2px #b8f77255;
           }
-          button[type="submit"]:hover {
+          button[type="submit"]:hover:not(:disabled) {
             background: #020202 !important;
             color: #f1f3f0 !important;
             border: 1.5px solid #b8f772;

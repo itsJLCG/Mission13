@@ -1,13 +1,13 @@
 {
-  "last_generated": "2025-07-11T02:21:17.129135",
+  "last_generated": "2025-07-12T00:36:06.494128",
   "current_challenge": {
-    "title": "Plastic-Free Day",
-    "description": "Challenge yourself to go an entire day without using any single-use plastics. Plan your meals ahead with reusable containers, bring your own cloth bags for shopping, and opt for tap water instead of bottled drinks. Share your experience on social media using #PlasticFreeDay to inspire others!",
-    "impact": "Reducing single-use plastics helps decrease ocean pollution, protect marine life, and lessen landfill waste, contributing to a healthier planet.",
-    "difficulty": "Medium",
-    "id": "daily_20250711",
-    "generated_at": "2025-07-11T02:21:22.286363",
-    "expires_at": "2025-07-12T00:00:00",
+    "id": "daily_20250712",
+    "title": "Reduce Energy Consumption",
+    "description": "Turn off all unnecessary lights and electronics for the day. Unplug devices when not in use.",
+    "impact": "Reducing energy consumption helps decrease carbon emissions and fights climate change.",
+    "difficulty": "Easy",
+    "generated_at": "2025-07-12T00:36:09.495125",
+    "expires_at": "2025-07-13T00:00:00",
     "type": "daily"
   }
 }
