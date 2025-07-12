@@ -98,8 +98,44 @@ class UserAuth:
             return False, "Internal server error"
     
     def get_user_by_email(self, email):
-        """Get user by email"""
-        return self.users.find_one({"email": email.lower().strip()})
+        """Get user by email address"""
+        try:
+            user = self.users.find_one({"email": email.lower().strip()})
+            return user
+            
+        except Exception as e:
+            print(f"Error getting user by email: {e}")
+            return None
+
+    def update_user_profile(self, email, profile_data):
+        """Update user profile data"""
+        try:
+            # Prepare update data
+            update_data = {}
+            
+            if 'firstName' in profile_data:
+                update_data['firstName'] = profile_data['firstName']
+            if 'lastName' in profile_data:
+                update_data['lastName'] = profile_data['lastName']
+            if 'profile' in profile_data:
+                update_data['profile'] = profile_data['profile']
+            if 'preferences' in profile_data:
+                update_data['preferences'] = profile_data['preferences']
+            
+            # Update user in database
+            result = self.users.update_one(
+                {"email": email.lower().strip()},
+                {"$set": update_data}
+            )
+            
+            if result.modified_count > 0:
+                return True, "Profile updated successfully"
+            else:
+                return False, "No changes made or user not found"
+            
+        except Exception as e:
+            print(f"Error updating user profile: {e}")
+            return False, "Failed to update profile"
 
 # Create global auth instance
 auth = UserAuth()

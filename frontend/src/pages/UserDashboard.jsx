@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useAuth } from '../auth/AuthContext' // Add this import
 import UserHeader from '../Components/UserDashboard/UserHeader'
 import Sidebar from '../Components/UserDashboard/Sidebar'
 import DailyChallenge from '../Components/UserDashboard/Sections/DailyChallenge'
@@ -11,8 +12,10 @@ const Home = () => {
   const [history, setHistory] = useState([])
   const [dailyChallenge, setDailyChallenge] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  
+  const { user } = useAuth() // Get current user
 
-  // Calculate total points from history
+  // Calculate total points from ACTUAL history
   const totalPoints = history.reduce((sum, item) => sum + (item.challenge.points || 50), 0)
 
   // Fetch daily challenge from backend
@@ -54,22 +57,37 @@ const Home = () => {
     }
   }
 
-  // Load history from localStorage
+  // Load history from localStorage (user-specific)
   const loadHistoryFromStorage = () => {
     try {
-      const savedHistory = localStorage.getItem('challenge-history')
+      if (!user) return // No user logged in
+      
+      // Load user-specific history
+      const userHistoryKey = `challenge-history-${user.email}`
+      const savedHistory = localStorage.getItem(userHistoryKey)
+      
       if (savedHistory) {
-        setHistory(JSON.parse(savedHistory))
+        const parsedHistory = JSON.parse(savedHistory)
+        setHistory(parsedHistory)
+        console.log(`Loaded ${parsedHistory.length} challenges for user ${user.email}`)
+      } else {
+        setHistory([]) // New user, empty history
+        console.log('No history found for new user')
       }
     } catch (error) {
       console.error('Error loading history:', error)
+      setHistory([]) // Reset to empty on error
     }
   }
 
-  // Save history to localStorage
+  // Save history to localStorage (user-specific)
   const saveHistoryToStorage = (newHistory) => {
     try {
-      localStorage.setItem('challenge-history', JSON.stringify(newHistory))
+      if (!user) return
+      
+      const userHistoryKey = `challenge-history-${user.email}`
+      localStorage.setItem(userHistoryKey, JSON.stringify(newHistory))
+      console.log(`Saved ${newHistory.length} challenges for user ${user.email}`)
     } catch (error) {
       console.error('Error saving history:', error)
     }
@@ -82,12 +100,21 @@ const Home = () => {
     saveHistoryToStorage(newHistory)
   }
 
+  // Reload history when user changes
+  useEffect(() => {
+    if (user) {
+      loadHistoryFromStorage()
+    } else {
+      setHistory([]) // Clear history if no user
+    }
+  }, [user])
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen bg-[#eaf6ec] items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#b8f772] mx-auto mb-4"></div>
-          <p className="text-[#191b40] font-semibold">Loading today's challenge...</p>
+          <p className="text-[#191b40] font-semibold">Loading dashboard...</p>
         </div>
       </div>
     )
@@ -102,13 +129,10 @@ const Home = () => {
       <div className="flex-1 flex flex-col">
         <UserHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
         
-        <main className="p-6">
-          <section className="my-8 mx-auto max-w-6xl px-4">
+        <main className="p-6 flex-1">
+          <section className="mx-auto max-w-7xl">
             {/* Header */}
-            <div
-              className="mb-6 flex items-center justify-between"
-              style={{ fontFamily: 'Lexend Deca, Poppins, Nunito Sans, sans-serif' }}
-            >
+            <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <span className="text-2xl font-bold text-[#191b40]">Today's Challenge</span>
                 <span className="px-3 py-1 rounded-full bg-[#b8f772] text-[#191b40] text-xs font-semibold">
