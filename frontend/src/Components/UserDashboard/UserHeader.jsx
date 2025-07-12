@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../auth/AuthContext' // Add this import
 import { streakManager } from '../../utils/streakManager'
 import SettingsModal from './SettingsModal'
 
@@ -13,7 +14,30 @@ const UserHeader = ({ onMenuClick }) => {
   const location = useLocation()
   const navigate = useNavigate()
   
-  const welcomeMessage = "Welcome back, Eco Warrior!"
+  // Get user from auth context
+  const { user, logout } = useAuth()
+  
+  // Create personalized welcome message
+  const getUserName = () => {
+    if (!user) return 'Eco Warrior'
+    
+    // // Try to get full name first
+    // if (user.firstName && user.lastName) {
+    //   return `${user.firstName} ${user.lastName}`
+    // }
+    // If only first name is available
+    if (user.firstName) {
+      return user.firstName
+    }
+    // If only email is available, use the part before @
+    if (user.email) {
+      return user.email.split('@')[0]
+    }
+    // Fallback
+    return 'Eco Warrior'
+  }
+  
+  const welcomeMessage = `Welcome back, ${getUserName()}!`
   const isDashboard = location.pathname === '/dashboard'
   
   // Load streak data on component mount
@@ -77,8 +101,13 @@ const UserHeader = ({ onMenuClick }) => {
 
   const unreadCount = notifications.filter(n => !n.read).length
 
+  // Typing animation effect - reset when user changes
   useEffect(() => {
     if (!isDashboard) return
+    
+    // Reset animation when welcome message changes
+    setDisplayedText('')
+    setIsTyping(true)
     
     let index = 0
     const typingInterval = setInterval(() => {
@@ -92,7 +121,7 @@ const UserHeader = ({ onMenuClick }) => {
     }, 100)
     
     return () => clearInterval(typingInterval)
-  }, [isDashboard])
+  }, [isDashboard, welcomeMessage]) // Added welcomeMessage as dependency
 
   // Close modals when clicking outside
   useEffect(() => {
@@ -121,9 +150,25 @@ const UserHeader = ({ onMenuClick }) => {
   }
 
   const handleLogout = () => {
-    // Handle logout logic
-    localStorage.removeItem('user_session')
+    // Use auth context logout method
+    logout()
     navigate('/login')
+  }
+
+  // Get user initials for profile button
+  const getUserInitials = () => {
+    if (!user) return 'U'
+    
+    if (user.firstName && user.lastName) {
+      return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
+    }
+    if (user.firstName) {
+      return user.firstName[0].toUpperCase()
+    }
+    if (user.email) {
+      return user.email[0].toUpperCase()
+    }
+    return 'U'
   }
 
   const getStreakEmoji = (streak) => {
@@ -281,7 +326,7 @@ const UserHeader = ({ onMenuClick }) => {
               aria-label="User Profile"
               onClick={() => setShowProfileMenu(!showProfileMenu)}
             >
-              <span>U</span>
+              <span>{getUserInitials()}</span>
             </button>
 
             {/* Profile Menu */}

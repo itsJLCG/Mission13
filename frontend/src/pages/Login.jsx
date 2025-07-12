@@ -1,68 +1,70 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext'
 import cityImg from '../assets/city.png'
 
 const Login = () => {
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  
+  const { login } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  
+  // Get the page user was trying to access before login
+  const from = location.state?.from?.pathname || '/dashboard'
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    })
     // Clear error when user starts typing
     if (error) setError('')
   }
 
-  const validateForm = () => {
-    if (!form.email.trim()) {
-      setError('Email is required')
-      return false
-    }
-    if (!form.password) {
-      setError('Password is required')
-      return false
-    }
-    return true
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
-    if (!validateForm()) {
-      return
-    }
-
     setLoading(true)
     setError('')
 
     try {
+      // Make API call to backend login endpoint
       const response = await fetch('http://127.0.0.1:5000/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: form.email,
-          password: form.password
+          email: formData.email,
+          password: formData.password
         })
       })
 
       const data = await response.json()
 
       if (response.ok && data.success) {
-        // Store user data in localStorage (or use a state management solution)
-        localStorage.setItem('user', JSON.stringify(data.user))
-        localStorage.setItem('isLoggedIn', 'true')
+        // Login successful - use auth context login
+        const loginSuccess = login(data.user)
         
-        // Redirect to dashboard or home page
-        navigate('/dashboard') // Change this to your desired route
+        if (loginSuccess) {
+          console.log('Login successful:', data.user)
+          // Redirect to intended page or dashboard
+          navigate(from, { replace: true })
+        } else {
+          setError('Login failed. Please try again.')
+        }
       } else {
-        setError(data.error || 'Login failed. Please try again.')
+        // Handle different error responses
+        setError(data.message || 'Invalid email or password. Please try again.')
       }
     } catch (error) {
       console.error('Login error:', error)
-      setError('Network error. Please check your connection and try again.')
+      setError('Unable to connect to server. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -138,7 +140,7 @@ const Login = () => {
                 name="email"
                 id="email"
                 placeholder="Email Address"
-                value={form.email}
+                value={formData.email}
                 onChange={handleChange}
                 required
                 disabled={loading}
@@ -159,7 +161,7 @@ const Login = () => {
                 name="password"
                 id="password"
                 placeholder="Password"
-                value={form.password}
+                value={formData.password}
                 onChange={handleChange}
                 required
                 disabled={loading}

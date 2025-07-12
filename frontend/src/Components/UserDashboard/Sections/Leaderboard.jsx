@@ -1,13 +1,13 @@
 import React from 'react'
 
-export default function Leaderboard({ currentUserPoints }) {
-  // Mock leaderboard data - replace with real data from API
+export default function Leaderboard({ currentUserPoints = 0 }) {
+  // Use REAL user points, not hardcoded data
   const mockLeaderboard = [
     { name: 'EcoWarrior23', points: 1250 },
     { name: 'GreenThumb', points: 1180 },
     { name: 'NatureLover', points: 1050 },
     { name: 'TreeHugger', points: 950 },
-    { name: 'You', points: currentUserPoints },
+    { name: 'You', points: currentUserPoints }, // Use actual user points
     { name: 'EcoFriend', points: 800 },
     { name: 'PlantMom', points: 750 }
   ]
@@ -22,7 +22,10 @@ export default function Leaderboard({ currentUserPoints }) {
         <span className="text-[#191b40] font-bold text-sm">👥 Leaderboard</span>
       </div>
       <div className="text-xs text-[#191b40] mb-3">
-        You're #{userRank} this week in Eco Points!
+        {currentUserPoints > 0 
+          ? `You're #${userRank} this week in Eco Points!`
+          : 'Complete challenges to see your ranking!'
+        }
       </div>
       <div className="space-y-2">
         {sortedBoard.slice(0, 5).map((user, idx) => (

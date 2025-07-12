@@ -1,10 +1,12 @@
 import React from 'react'
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { AuthProvider } from './auth/AuthContext'
+import ProtectedRoute from './auth/ProtectedRoute'
+
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Home from './pages/Home'
 import UserDashboard from './pages/UserDashboard'
-// import Challenge from './pages/Challenge'
 import Game from './pages/Game'
 import Chatbot from './pages/Chatbot'
 import UserProfile from './pages/UserProfile'
@@ -19,20 +21,46 @@ function Layout({ children }) {
 }
 
 const App = () => (
-  <Router>
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/dashboard" element={<UserDashboard />} />
-        {/* <Route path="/challenge" element={<Challenge />} /> */}
-        <Route path="/game" element={<Game />} />
-        <Route path="/chatbot" element={<Chatbot />} />
-        <Route path="/profile" element={<UserProfile />} />
-      </Routes>
-    </Layout>
-  </Router>
+  <AuthProvider>
+    <Router>
+      <Layout>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          
+          {/* Protected Routes */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <UserDashboard />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/game" element={
+            <ProtectedRoute>
+              <Game />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/chatbot" element={
+            <ProtectedRoute>
+              <Chatbot />
+            </ProtectedRoute>
+          } />
+          
+          {/* Catch all route - redirect to login */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </Layout>
+    </Router>
+  </AuthProvider>
 )
 
 export default App
