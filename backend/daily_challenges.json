@@ -1,13 +1,13 @@
 {
-  "last_generated": "2025-07-12T00:36:06.494128",
+  "last_generated": "2025-07-15T04:17:13.784522",
   "current_challenge": {
-    "id": "daily_20250712",
-    "title": "Reduce Energy Consumption",
-    "description": "Turn off all unnecessary lights and electronics for the day. Unplug devices when not in use.",
-    "impact": "Reducing energy consumption helps decrease carbon emissions and fights climate change.",
+    "title": "Plastic-Free Grocery Day",
+    "description": "For one entire day, commit to not using any single-use plastic while grocery shopping. Bring reusable bags, produce bags, and containers. Plan your meals in advance to avoid buying pre-packaged foods and opt for bulk items instead. Check labels and try to choose products with minimal or eco-friendly packaging.",
+    "impact": "Reducing single-use plastics helps decrease plastic pollution, which harms marine life and ecosystems. Making this small change can lead to a deeper awareness of plastic consumption.",
     "difficulty": "Easy",
-    "generated_at": "2025-07-12T00:36:09.495125",
-    "expires_at": "2025-07-13T00:00:00",
+    "id": "daily_20250715",
+    "generated_at": "2025-07-15T04:17:20.112090",
+    "expires_at": "2025-07-16T00:00:00",
     "type": "daily"
   }
 }
