@@ -4,7 +4,9 @@ import { NavLink } from 'react-router-dom'
 import { AiOutlineHome } from 'react-icons/ai'
 import { MdOutlineEmojiEvents } from 'react-icons/md'
 import { BsChatDots } from 'react-icons/bs'
-import { IoGameControllerOutline } from 'react-icons/io5' // New game icon
+import { IoGameControllerOutline } from 'react-icons/io5'
+// Import your logo
+import logo from '../../assets/logo.png' // Adjust the path and filename as needed
 
 const navItems = [
   {
@@ -25,7 +27,7 @@ const navItems = [
 ]
 
 export default function Sidebar({ children }) {
-  const [open, setOpen] = useState(false) // Changed from true to false
+  const [open, setOpen] = useState(false)
 
   return (
     <div className="flex flex-row">
@@ -66,8 +68,12 @@ export default function Sidebar({ children }) {
         {/* Logo/Avatar - Only show when open */}
         {open && (
           <div className="flex justify-center items-center mb-10 w-full transition-all duration-300">
-            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg">
-              <span className="text-[#b8f772] font-bold text-xl">A</span>
+            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg overflow-hidden">
+              <img 
+                src={logo} 
+                alt="Logo" 
+                className="w-18 h-18 object-contain"
+              />
             </div>
           </div>
         )}
