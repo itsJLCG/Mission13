@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=Nunito+Sans:wght@400;700&display=swap');
+
+.howitworks-section {
+  max-width: 80rem;
+  margin: 8rem auto;
+  padding: 0 1rem;
+}
+
+.howitworks-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-family: 'Poppins', sans-serif;
+  color: #eef7b4;
+}
+
+.howitworks-description {
+  margin-bottom: 2.5rem;
+  text-align: center;
+  font-family: 'Nunito Sans', sans-serif;
+  color: rgba(190, 198, 123, 0.67);
+}
+
+.howitworks-content {
+  display: flex;
+  margin-right: 2rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 3.25rem;
+}
+
+.howitworks-image-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3.5rem;
+}
+
+.howitworks-illustration {
+  width: 950px;
+  height: 350px;
+  object-fit: contain;
+  border-radius: 5rem;
+}
+
+.howitworks-steps {
+  width: 100%;
+}
+
+.howitworks-timeline {
+  position: relative;
+  border-left: 4px solid #d8e84e;
+  padding-left: 2rem;
+}
+
+.howitworks-step {
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.howitworks-step:last-child {
+  margin-bottom: 0;
+}
+
+.howitworks-step-number {
+  position: absolute;
+  left: -2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: #d8e84e;
+  color: #092c25;
+  font-weight: bold;
+  font-size: 1.125rem;
+  box-shadow: 0 4px 16px 0 rgba(216, 232, 78, 0.3);
+  font-family: 'Poppins', sans-serif;
+}
+
+.howitworks-step-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  font-family: 'Poppins', sans-serif;
+  color: #eef7b4;
+}
+
+.howitworks-step-description {
+  font-size: 1rem;
+  font-family: 'Nunito Sans', sans-serif;
+  color: #ffffff;
+}
+
+.animate-howitworks-fadein {
+  animation: howitworks-fadein 1s cubic-bezier(0.4, 2, 0.6, 0.9) both;
+}
+
+@keyframes howitworks-fadein {
+  0% {
+    opacity: 0;
+    transform: translateX(60px) scale(0.98);
+  }
+  80% {
+    opacity: 1;
+    transform: translateX(-6px) scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes step-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(-30px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.15) translateY(8px);
+  }
+  80% {
+    transform: scale(0.95) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .howitworks-content {
+    flex-direction: row;
+  }
+  
+  .howitworks-image-container {
+    width: 50%;
+    margin-bottom: 0;
+  }
+  
+  .howitworks-steps {
+    width: 50%;
+  }
+}
