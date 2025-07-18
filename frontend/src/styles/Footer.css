@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=Nunito+Sans:wght@400;700&display=swap');
+
+.footer {
+  padding: 3rem 0;
+  margin-top: 5rem;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.footer-content {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 2.5rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footer-brand {
+  text-align: center;
+}
+
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  font-family: 'Poppins', sans-serif;
+  color: #d8e84e;
+}
+
+.brand-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 21rem;
+  margin: 0 auto;
+  font-family: 'Nunito Sans', sans-serif;
+  color: #ffffff;
+}
+
+.footer-links {
+  text-align: center;
+}
+
+.footer-section-title {
+  font-size: 1.125rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  font-family: 'Poppins', sans-serif;
+  color: #eef7b4;
+}
+
+.links-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-contact {
+  text-align: center;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.footer-link {
+  transition: all 0.3s ease;
+  font-family: 'Nunito Sans', sans-serif;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: #d8e84e;
+  transform: translateX(4px);
+}
+
+.social-link {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  color: #d8e84e;
+  text-decoration: none;
+}
+
+.social-link:hover {
+  color: #eef7b4;
+  transform: translateY(-2px);
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(216, 232, 78, 0.2);
+  padding-top: 1.5rem;
+}
+
+.footer-bottom-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.copyright {
+  font-size: 0.875rem;
+  font-family: 'Nunito Sans', sans-serif;
+  color: #ffffff;
+}
+
+.legal-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.legal-link {
+  font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .footer-brand {
+    text-align: left;
+  }
+  
+  .footer-contact {
+    text-align: right;
+  }
+  
+  .social-links {
+    justify-content: flex-end;
+  }
+  
+  .footer-bottom-content {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}

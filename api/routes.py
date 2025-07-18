@@ -58,25 +58,33 @@ def login():
     """User login endpoint"""
     try:
         data = request.get_json()
+        
+        if not data:
+            return jsonify({"success": False, "message": "No data provided"}), 400
+        
         email = data.get('email', '')
         password = data.get('password', '')
+        
+        if not email or not password:
+            return jsonify({"success": False, "message": "Email and password are required"}), 400
         
         # Get user from database
         user = auth.get_user_by_email(email)
         
         if not user:
-            return jsonify({"error": "Invalid email or password"}), 401
+            return jsonify({"success": False, "message": "Invalid email or password"}), 401
         
         # Verify password
         if not auth.verify_password(password, user['password']):
-            return jsonify({"error": "Invalid email or password"}), 401
+            return jsonify({"success": False, "message": "Invalid email or password"}), 401
         
         # Return user data (without password)
         user_data = {
-            "id": str(user['_id']),
+            "id": user.get('id', str(user.get('_id', ''))),
             "firstName": user['firstName'],
             "lastName": user['lastName'],
             "email": user['email'],
+            "createdAt": user.get('createdAt', ''),
             "profile": user.get('profile', {}),
             "preferences": user.get('preferences', {}),
             "stats": user.get('stats', {})
@@ -90,7 +98,52 @@ def login():
         
     except Exception as e:
         print(f"Login endpoint error: {e}")
-        return jsonify({"error": "Internal server error"}), 500
+        return jsonify({"success": False, "message": "Internal server error"}), 500
+
+@api.route('/api/user/profile', methods=['GET', 'PUT'])
+def user_profile():
+    """Get or update user profile"""
+    try:
+        if request.method == 'GET':
+            # Get user profile
+            email = request.args.get('email')
+            if not email:
+                return jsonify({"success": False, "message": "Email required"}), 400
+            
+            user = auth.get_user_by_email(email)
+            if not user:
+                return jsonify({"success": False, "message": "User not found"}), 404
+            
+            user_data = {
+                "id": user.get('id', str(user.get('_id', ''))),
+                "firstName": user['firstName'],
+                "lastName": user['lastName'],
+                "email": user['email'],
+                "profile": user.get('profile', {}),
+                "preferences": user.get('preferences', {})
+            }
+            
+            return jsonify({"success": True, "user": user_data}), 200
+            
+        elif request.method == 'PUT':
+            # Update user profile
+            data = request.get_json()
+            email = data.get('email')
+            
+            if not email:
+                return jsonify({"success": False, "message": "Email required"}), 400
+            
+            # Update user data
+            success, message = auth.update_user_profile(email, data)
+            
+            if success:
+                return jsonify({"success": True, "message": message}), 200
+            else:
+                return jsonify({"success": False, "message": message}), 400
+                
+    except Exception as e:
+        print(f"Profile endpoint error: {e}")
+        return jsonify({"success": False, "message": "Internal server error"}), 500
 
 # Keep all your existing routes
 @api.route('/api/chat', methods=['POST'])
@@ -142,3 +195,9 @@ def generate_new_challenge():
         return jsonify(challenge), 200
     except Exception as e:
         return jsonify({'error': f'Failed to generate new challenge: {str(e)}'}), 500
+
+# Health check endpoint
+@api.route('/api/health', methods=['GET'])
+def health_check():
+    """Health check endpoint"""
+    return jsonify({"status": "healthy", "message": "API is running"}), 200

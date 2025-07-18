@@ -205,13 +205,16 @@ function ChallengeCard({ challenge, onFeedback, timeLeft, completed }) {
     <div className="relative">
       {/* Main Card */}
       <div
-        className={`
-          bg-white rounded-3xl shadow-xl p-8 transition-all duration-300 relative overflow-hidden
-          border border-[#b8f772]/20
-          ${completed ? 'opacity-95 bg-gradient-to-br from-white to-[#f8f9fa]' : 'hover:shadow-2xl hover:scale-[1.02]'}
-        `}
-        style={{ fontFamily: 'Nunito Sans, sans-serif' }}
-      >
+  className={`
+    bg-[#fcfbec] rounded-2xl p-6
+    border-2 border-black
+    backdrop-blur-sm 
+    shadow-[0_6px_0_rgba(0,0,0,0.8)]
+    transition-all duration-300
+    ${completed ? 'opacity-95' : 'hover:shadow-[0_8px_0_rgba(0,0,0,0.8)] hover:scale-[1.02]'}
+  `}
+  style={{ fontFamily: 'Nunito Sans, sans-serif' }}
+>
         {/* Background Pattern */}
         <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
           <svg viewBox="0 0 100 100" className="w-full h-full">
@@ -220,128 +223,152 @@ function ChallengeCard({ challenge, onFeedback, timeLeft, completed }) {
         </div>
 
         {/* Header Section */}
-        <div className="flex items-start justify-between mb-6">
-          {/* Left: Icon and Title */}
-          <div className="flex items-center flex-1 gap-4">
-            {getChallengeIcon(challenge.title)}
-            <div>
-              <div className="flex items-center gap-3">
-                <h3 
-                  className="text-2xl font-bold text-[#191b40] leading-tight"
-                  style={{ fontFamily: 'Lexend Deca, sans-serif' }}
-                >
-                  {challenge.title}
-                </h3>
-                {completed && (
-                  <div className="w-8 h-8 bg-[#b8f772] rounded-full flex items-center justify-center">
-                    <span className="text-sm text-white">✓</span>
-                  </div>
-                )}
-              </div>
-              <p className="text-[#191b40] opacity-60 text-sm mt-1">Today's Climate Action</p>
-            </div>
+<div className="flex items-start justify-between mb-6">
+  {/* Left: Icon and Title */}
+  <div className="flex items-center flex-1 gap-4">
+    {getChallengeIcon(challenge.title)}
+    <div>
+      <div className="flex items-center gap-3">
+        <h3 
+          className="text-xl font-bold text-[#191b40] leading-tight"
+          style={{ fontFamily: 'Poppins, sans-serif' }}
+        >
+          {challenge.title}
+        </h3>
+        {completed && (
+          <div className="w-8 h-8 bg-[#fcfbec]/70 backdrop-blur-sm rounded-full flex items-center justify-center">
+            <span className="text-sm text-white">✓</span>
           </div>
-        </div>
+        )}
+      </div>
+      <p className="text-[#191b40] opacity-60 text-sm mt-1">Today's Climate Action</p>
+    </div>
+  </div>
 
-        {/* Timer and Difficulty Badges */}
-        <div className="flex gap-4 mb-6">
-          {/* Timer Badge */}
-          <div className="flex items-center gap-3 bg-gradient-to-r from-[#f8f9fa] to-white rounded-2xl px-4 py-3 border border-[#b8f772]/20 shadow-sm">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#b8f772] to-[#a3e85c] rounded-xl flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 6v6l4 2"/>
-              </svg>
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-[#191b40] opacity-60">Time Remaining</p>
-              <p className="text-lg font-bold text-[#191b40]" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-                {timeLeft}
-              </p>
-            </div>
-          </div>
+  {/* Timer and Difficulty Badges (right side of header) */}
+<div className="flex items-center gap-6 ml-auto">
+  {/* Timer Icon with Tooltip */}
+  <div className="flex items-center gap-2">
+    <div className="relative group">
+      <svg
+        className="w-5 h-5 text-[#b8f772]"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        viewBox="0 0 24 24"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 6v6l4 2" />
+      </svg>
+      <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+        Time remaining
+      </div>
+    </div>
+    <p className="text-sm font-medium text-[#191b40]" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+      {timeLeft}
+    </p>
+  </div>
 
-          {/* Difficulty Badge */}
-          {challenge.difficulty && (
-            <div className="flex items-center gap-3 bg-gradient-to-r from-[#f8f9fa] to-white rounded-2xl px-4 py-3 border border-[#b8f772]/20 shadow-sm">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${difficultyStyle.bg}`}>
-                <span className="text-lg">{difficultyStyle.icon}</span>
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-[#191b40] opacity-60">Difficulty</p>
-                <p className="text-lg font-bold text-[#191b40]">
-                  {challenge.difficulty}
-                </p>
-              </div>
-            </div>
-          )}
+  {/* Difficulty Icon with Tooltip */}
+  {challenge.difficulty && (
+    <div className="flex items-center gap-2">
+      <div className="relative group">
+        <div className={`w-5 h-5 flex items-center justify-center ${difficultyStyle.bg} rounded`}>
+          <span className="text-xs">{difficultyStyle.icon}</span>
         </div>
+        <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+          {challenge.difficulty} difficulty
+        </div>
+      </div>
+      <p className="text-sm text-[#191b40] font-medium capitalize">
+        {challenge.difficulty}
+      </p>
+    </div>
+  )}
+</div>
+</div>
+
 
         {/* Description */}
         <div className="mb-6">
-          <h4 className="text-sm font-semibold text-[#191b40] mb-3 opacity-80">Challenge Description</h4>
-          <p className="text-[#191b40] leading-relaxed text-lg">
-            {challenge.description}
-          </p>
+  <h4 
+    className="text-sm font-bold text-[#191b40] mb-3 opacity-100" 
+    style={{ fontFamily: 'Poppins, sans-serif' }}
+  >
+    Challenge Description
+  </h4>
+  <p 
+    className="text-[#191b40] leading-relaxed text-xs"
+    style={{ fontFamily: 'Poppins, sans-serif' }}
+  >
+    {challenge.description}
+  </p>
+</div>
+
+
+       {/* Impact Section */}
+{challenge.impact && (
+  <div className="mb-4">
+    <div className="bg-[#f5f9ed] rounded-xl p-4 border-l-4 border-[#b8f772]">
+      <div className="flex items-start gap-3">
+        {/* Icon */}
+        <div className="w-9 h-9 bg-gradient-to-br from-[#b8f772] to-[#a3e85c] rounded-xl flex items-center justify-center shadow-md">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" className="text-white">
+            <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" />
+          </svg>
         </div>
 
-        {/* Impact Section */}
-        {challenge.impact && (
-          <div className="mb-8">
-            <div className="bg-gradient-to-r from-[#b8f772]/10 to-[#a3e85c]/10 rounded-2xl p-6 border-l-4 border-[#b8f772]">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-[#b8f772] to-[#a3e85c] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                  <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" className="text-white">
-                    <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z"/>
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <h4 
-                    className="text-lg font-bold text-[#191b40] mb-3"
-                    style={{ fontFamily: 'Lexend Deca, sans-serif' }}
-                  >
-                    Environmental Impact
-                  </h4>
-                  <p className="text-[#191b40] leading-relaxed opacity-90">
-                    {challenge.impact}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Bottom Section */}
-        <div className="flex items-center justify-between">
-          {/* Points Display */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-12 h-12 shadow-lg bg-gradient-to-br from-yellow-400 to-orange-400 rounded-2xl">
-              <span className="text-xl text-white">🏆</span>
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-[#191b40] opacity-60">Reward Points</p>
-              <p className="text-2xl font-bold text-[#191b40]">
-                +{challenge.points || 50}
-              </p>
-            </div>
-          </div>
-
-          {/* Action Button */}
-          <button
-            className={`
-              px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg
-              ${completed 
-                ? 'bg-gradient-to-r from-gray-300 to-gray-400 text-gray-600 cursor-not-allowed' 
-                : 'bg-gradient-to-r from-[#b8f772] to-[#a3e85c] text-[#191b40] hover:shadow-xl hover:scale-105 active:scale-95'
-              }
-            `}
-            onClick={completed ? undefined : onFeedback}
-            disabled={completed}
+        {/* Text */}
+        <div className="flex-1">
+          <h4
+            className="text-sm font-semibold text-[#191b40] mb-1"
             style={{ fontFamily: 'Lexend Deca, sans-serif' }}
           >
-            {completed ? '✅ Completed' : '🚀 Accept Challenge'}
-          </button>
+            Environmental Impact
+          </h4>
+          <p className="text-xs text-[#191b40] opacity-100 leading-snug" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            {challenge.impact}
+          </p>
         </div>
+      </div>
+    </div>
+  </div>
+)}
+
+{/* Bottom Section */}
+<div className="flex items-center justify-between mt-4">
+  {/* Points Display */}
+  <div className="flex items-center gap-2">
+    <div className="flex items-center justify-center w-9 h-9 shadow-md bg-gradient-to-br from-yellow-400 to-orange-400 rounded-xl">
+      <span className="text-lg text-white">🏆</span>
+    </div>
+    <div>
+      <p className="text-[11px] font-medium text-[#191b40] opacity-60 leading-tight">
+        Reward Points
+      </p>
+      <p className="text-lg font-bold text-[#191b40]" style={{ fontFamily: 'Poppins, sans-serif' }}>
+        +{challenge.points || 50}
+      </p>
+    </div>
+  </div>
+
+  {/* Action Button */}
+  <button
+    className={`
+      px-10 py-4 rounded-xl font-semibold text-sm transition-all duration-300 shadow-md
+      ${completed 
+        ? 'bg-gradient-to-r from-gray-300 to-gray-400 text-gray-600 cursor-not-allowed' 
+        : 'bg-gradient-to-r from-[#b8f772] to-[#a3e85c] text-[#191b40] hover:shadow-lg hover:scale-[1.02] active:scale-95'
+      }
+    `}
+    onClick={completed ? undefined : onFeedback}
+    disabled={completed}
+    style={{ fontFamily: 'Lexend Deca, sans-serif' }}
+  >
+    {completed ? '✅ Completed' : ' Accept Challenge'}
+  </button>
+</div>
+
 
         {/* Points Animation Overlay */}
         {showPointsAnimation && (

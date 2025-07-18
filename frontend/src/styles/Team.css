@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=Nunito+Sans:wght@400;700&display=swap');
+
+.team-section {
+  max-width: 72rem;
+  margin: 5rem auto;
+  padding: 0 2.5rem;
+}
+
+.team-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.team-title {
+  font-size: 2.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  font-family: 'Poppins', sans-serif;
+  color: #eef7b4;
+}
+
+.team-description {
+  font-size: 1.125rem;
+  max-width: 48rem;
+  margin: 0 auto;
+  font-family: 'Nunito Sans', sans-serif;
+  color: rgba(190, 198, 123, 0.67);
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.team-member {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.team-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 2px solid rgba(216, 232, 78, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 0 rgba(216, 232, 78, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 18rem;
+  transition: all 0.3s ease;
+}
+
+.team-card:hover {
+  transform: translateY(-8px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.12);
+  border-bottom: 3px solid rgba(216, 232, 78, 0.5);
+  box-shadow: 
+    0 16px 48px rgba(0, 0, 0, 0.4),
+    0 8px 0 rgba(216, 232, 78, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.team-photo-container {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #d8e84e;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(216, 232, 78, 0.2);
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.team-photo {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.team-card:hover .team-photo {
+  transform: scale(1.08);
+}
+
+.team-card:hover .team-photo-container {
+  box-shadow: 0 12px 40px 0 rgba(216, 232, 78, 0.4);
+  border-color: #eef7b4;
+}
+
+.member-name {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-family: 'Poppins', sans-serif;
+  color: #eef7b4;
+}
+
+.member-role {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #d8e84e;
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+@keyframes teamBounce {
+  0% { 
+    transform: scale(0.7) translateY(40px); 
+    opacity: 0; 
+  }
+  70% { 
+    transform: scale(1.05) translateY(-8px); 
+    opacity: 1; 
+  }
+  100% { 
+    transform: scale(1) translateY(0); 
+    opacity: 1; 
+  }
+}
+
+@media (min-width: 768px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .team-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
