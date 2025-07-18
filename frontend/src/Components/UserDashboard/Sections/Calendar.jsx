@@ -55,7 +55,10 @@ export default function Calendar({ history = [] }) {
   }).length : 0
   
   return (
-    <div className="bg-white rounded-xl shadow p-4 border border-[#b8f772]">
+<div
+  className="bg-[#fcfbec] rounded-2xl p-6 border-2 border-black backdrop-blur-sm shadow-[0_6px_0_rgba(0,0,0,0.8)] transition-all duration-300"
+  style={{ fontFamily: 'Poppins, sans-serif' }}
+>
       <div className="flex items-center gap-2 mb-3">
         <span className="text-[#191b40] font-bold text-sm">📅 Monthly Activity</span>
       </div>

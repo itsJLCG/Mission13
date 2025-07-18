@@ -17,7 +17,10 @@ export default function Leaderboard({ currentUserPoints = 0 }) {
   const userRank = sortedBoard.findIndex(user => user.name === 'You') + 1
   
   return (
-    <div className="bg-white rounded-xl shadow p-4 border border-[#b8f772]">
+<div
+  className="bg-[#fcfbec] rounded-2xl p-6 border-2 border-black backdrop-blur-sm shadow-[0_6px_0_rgba(0,0,0,0.8)] transition-all duration-300"
+  style={{ fontFamily: 'Poppins, sans-serif' }}
+>
       <div className="flex items-center gap-2 mb-3">
         <span className="text-[#191b40] font-bold text-sm">👥 Leaderboard</span>
       </div>
@@ -28,21 +31,53 @@ export default function Leaderboard({ currentUserPoints = 0 }) {
         }
       </div>
       <div className="space-y-2">
-        {sortedBoard.slice(0, 5).map((user, idx) => (
-          <div 
-            key={idx} 
-            className={`
-              flex items-center justify-between text-xs p-2 rounded
-              ${user.name === 'You' ? 'bg-[#b8f772] text-[#191b40] font-bold' : 'bg-gray-50'}
-            `}
-          >
-            <span className="flex items-center gap-2">
-              <span className="font-bold">#{idx + 1}</span>
-              <span>{user.name}</span>
-            </span>
-            <span className="font-semibold">{user.points} pts</span>
-          </div>
-        ))}
+      {sortedBoard.slice(0, 5).map((user, idx) => {
+  const rank = idx + 1
+
+  // Default styles
+  let bgColor = 'bg-gray-50'
+  let textColor = 'text-[#191b40]'
+  let pointColor = 'text-gray-600'
+  let hoverEffect = 'hover:bg-gray-100'
+
+  // Style by rank
+  if (rank === 1) {
+    bgColor = 'bg-[#184b3e]'
+    textColor = 'text-white'
+    pointColor = 'text-white'
+    hoverEffect = 'hover:brightness-110'
+  } else if (rank === 2) {
+    bgColor = 'bg-[#599645]'
+    textColor = 'text-white'
+    pointColor = 'text-white'
+    hoverEffect = 'hover:brightness-110'
+  } else if (rank === 3) {
+    bgColor = 'bg-[#d8e84e]'
+    textColor = 'text-[#191b40]'
+    pointColor = 'text-[#191b40]'
+    hoverEffect = 'hover:brightness-105'
+  } else if (user.name === 'You') {
+    bgColor = 'bg-[#b8f772]'
+    textColor = 'text-[#191b40]'
+    pointColor = 'text-[#191b40]'
+    hoverEffect = 'hover:bg-[#a3e85c]'
+  }
+
+  return (
+    <div
+      key={idx}
+      className={`flex items-center justify-between text-sm p-2 rounded ${bgColor} ${textColor} font-medium transition-all duration-200 ${hoverEffect}`}
+      style={{ fontFamily: 'Poppins, sans-serif' }}
+    >
+      <span className="flex items-center gap-2">
+        <span className="font-bold">#{rank}</span>
+        <span>{user.name}</span>
+      </span>
+      <span className={`font-semibold ${pointColor}`}>{user.points} pts</span>
+    </div>
+  )
+})}
+
       </div>
     </div>
   )

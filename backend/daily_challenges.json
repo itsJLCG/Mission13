@@ -1,13 +1,13 @@
 {
-  "last_generated": "2025-07-15T04:17:13.784522",
+  "last_generated": "2025-07-18T15:04:05.371542",
   "current_challenge": {
-    "title": "Plastic-Free Grocery Day",
-    "description": "For one entire day, commit to not using any single-use plastic while grocery shopping. Bring reusable bags, produce bags, and containers. Plan your meals in advance to avoid buying pre-packaged foods and opt for bulk items instead. Check labels and try to choose products with minimal or eco-friendly packaging.",
-    "impact": "Reducing single-use plastics helps decrease plastic pollution, which harms marine life and ecosystems. Making this small change can lead to a deeper awareness of plastic consumption.",
-    "difficulty": "Easy",
-    "id": "daily_20250715",
-    "generated_at": "2025-07-15T04:17:20.112090",
-    "expires_at": "2025-07-16T00:00:00",
+    "title": "Plastic-Free Day Challenge",
+    "description": "For one day, commit to not using any single-use plastics. Prepare by packing a reusable water bottle, using cloth bags for shopping, and bringing your own containers for food. Avoid items like plastic straws, cutlery, and bags. Share your experience on social media to inspire others and reflect on the impact of plastic pollution.",
+    "impact": "Reducing single-use plastics helps decrease pollution in oceans and landfills, protects wildlife, and promotes a more sustainable lifestyle.",
+    "difficulty": "Medium",
+    "id": "daily_20250718",
+    "generated_at": "2025-07-18T15:04:11.460218",
+    "expires_at": "2025-07-19T00:00:00",
     "type": "daily"
   }
 }
