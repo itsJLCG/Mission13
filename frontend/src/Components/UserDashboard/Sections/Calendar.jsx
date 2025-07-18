@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Calendar({ history }) {
+export default function Calendar({ history = [] }) {
   const today = new Date()
   const currentMonth = today.getMonth()
   const currentYear = today.getFullYear()
@@ -9,7 +9,7 @@ export default function Calendar({ history }) {
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1)
   const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0)
   const daysInMonth = lastDayOfMonth.getDate()
-  const startingDayOfWeek = firstDayOfMonth.getDay() // 0 = Sunday, 1 = Monday, etc.
+  const startingDayOfWeek = firstDayOfMonth.getDay()
   
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -29,7 +29,9 @@ export default function Calendar({ history }) {
   // Add all days of the month
   for (let day = 1; day <= daysInMonth; day++) {
     const dayDate = new Date(currentYear, currentMonth, day)
-    const hasActivity = history.some(item => {
+    
+    // Check if this day has activity based on REAL history data
+    const hasActivity = history && history.length > 0 && history.some(item => {
       const itemDate = new Date(item.completedAt)
       return itemDate.toDateString() === dayDate.toDateString()
     })
@@ -46,10 +48,17 @@ export default function Calendar({ history }) {
     })
   }
   
-  const activeDays = calendarDays.filter(day => day && day.hasActivity).length
+  // Count ACTUAL active days from real history
+  const activeDays = history ? history.filter(item => {
+    const itemDate = new Date(item.completedAt)
+    return itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear
+  }).length : 0
   
   return (
-    <div className="bg-white rounded-xl shadow p-4 border border-[#b8f772]">
+<div
+  className="bg-[#fcfbec] rounded-2xl p-6 border-2 border-black backdrop-blur-sm shadow-[0_6px_0_rgba(0,0,0,0.8)] transition-all duration-300"
+  style={{ fontFamily: 'Poppins, sans-serif' }}
+>
       <div className="flex items-center gap-2 mb-3">
         <span className="text-[#191b40] font-bold text-sm">📅 Monthly Activity</span>
       </div>
@@ -60,7 +69,10 @@ export default function Calendar({ history }) {
           {monthNames[currentMonth]} {currentYear}
         </h3>
         <div className="text-xs text-[#191b40] mt-1">
-          You completed challenges {activeDays} out of {daysInMonth} days this month!
+          {activeDays > 0 
+            ? `You completed challenges ${activeDays} out of ${daysInMonth} days this month!`
+            : 'No challenges completed this month yet. Start your eco-journey!'
+          }
         </div>
       </div>
       

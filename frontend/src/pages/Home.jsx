@@ -1,6 +1,7 @@
 import React from 'react'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
+import '../styles/Home.css' // Add this import for the mesh background
 import Header from '../Components/Home/Header'
 import Hero from '../Components/Home/Hero'
 import Features from '../Components/Home/Features'
@@ -15,7 +16,8 @@ const Home = () => {
   }, [])
 
   return (
-    <>
+    <div className="home-container">
+      <div className="mesh-overlay"></div>
       <div data-aos="fade-down">
         <Header />
       </div>
@@ -37,7 +39,7 @@ const Home = () => {
       <div>
         <Footer />
       </div>
-    </>
+    </div>
   )
 }
 

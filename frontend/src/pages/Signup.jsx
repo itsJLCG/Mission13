@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import cityImg from '../assets/city.png'
+import cityImg from '../assets/logo.png'
+import signupImg from '../assets/signup.png' // Using city.png for signup
+import '../styles/Signup.css' // Using the new Signup.css file
 
 const Signup = () => {
   const [form, setForm] = useState({
@@ -88,168 +90,169 @@ const Signup = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f1f3f0] relative">
-      {/* Mission13 Logo Top Left */}
-      <div
-        className="absolute z-10 flex items-center gap-2 top-6 left-8"
-        style={{ fontFamily: 'Lexend Deca, sans-serif' }}
-      >
-        <span className="inline-block w-3 h-3 bg-[#b8f772] rounded-full"></span>
-        <span className="text-[#020202] text-xl font-bold">Mission13</span>
-      </div>
-      {/* Back Button Top Right */}
-      <button
-        onClick={() => navigate('/')}
-        className="absolute top-6 right-8 text-[#020202] hover:text-[#b8f772] transition z-10"
-        aria-label="Back"
-        style={{ fontFamily: 'Lexend Deca, sans-serif' }}
-      >
-        <svg width="28" height="28" fill="none" viewBox="0 0 24 24">
-          <path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </button>
-      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg flex flex-col md:flex-row overflow-hidden border border-[#b8f772]">
-        {/* Left Side: Signup Form */}
-        <div className="md:w-1/2 flex flex-col justify-center px-8 py-12 bg-[#f1f3f0]">
-          <h2
-            className="text-3xl font-extrabold mb-2 text-[#020202]"
-            style={{ fontFamily: 'Lexend Deca, sans-serif' }}
-          >
-            Join Mission13
-          </h2>
-          <p
-            className="mb-8 text-[#020202]"
-            style={{ fontFamily: 'Nunito Sans, sans-serif' }}
-          >
-            Create your account and start making a difference today.
-          </p>
+    <div className="login-container">
+      <div className="mesh-overlay"></div>
+      
+      {/* Header */}
+      <header className="login-header">
+        <div className="logo-section">
+          <img src={cityImg} alt="Logo" className="logo" />
+        </div>
+        <button
+          onClick={() => navigate('/')}
+          className="back-button"
+          aria-label="Back to home"
+        >
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Back
+        </button>
+      </header>
 
-          {/* Error Message */}
-          {error && (
-            <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 border border-red-400 rounded-lg">
-              {error}
+      {/* Main Content */}
+      <div className="login-content">
+        <div className="login-card glass-card">
+          <div className="login-form-section">
+            <div className="form-header">
+              <h1 className="form-title">Join Mission13</h1>
+              <p className="form-subtitle">
+                Create your account and start making a difference today.
+              </p>
             </div>
-          )}
 
-          {/* Success Message */}
-          {success && (
-            <div className="p-3 mb-4 text-sm text-green-700 bg-green-100 border border-green-400 rounded-lg">
-              {success}
-            </div>
-          )}
+            {/* Error Message */}
+            {error && (
+              <div className="error-message">
+                {error}
+              </div>
+            )}
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="flex gap-4">
-              <input
-                type="text"
-                name="firstName"
-                placeholder="First Name"
-                value={form.firstName}
-                onChange={handleChange}
-                required
-                disabled={loading}
-                className="w-1/2 border border-[#b8f772] px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#b8f772] bg-white text-[#020202] disabled:opacity-50"
-                style={{ fontFamily: 'Nunito Sans, sans-serif' }}
-              />
-              <input
-                type="text"
-                name="lastName"
-                placeholder="Last Name"
-                value={form.lastName}
-                onChange={handleChange}
-                required
-                disabled={loading}
-                className="w-1/2 border border-[#b8f772] px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#b8f772] bg-white text-[#020202] disabled:opacity-50"
-                style={{ fontFamily: 'Nunito Sans, sans-serif' }}
-              />
-            </div>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={form.email}
-              onChange={handleChange}
-              required
-              disabled={loading}
-              className="border border-[#b8f772] px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#b8f772] bg-white text-[#020202] disabled:opacity-50"
-              style={{ fontFamily: 'Nunito Sans, sans-serif' }}
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password (min 6 characters)"
-              value={form.password}
-              onChange={handleChange}
-              required
-              disabled={loading}
-              className="border border-[#b8f772] px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#b8f772] bg-white text-[#020202] disabled:opacity-50"
-              style={{ fontFamily: 'Nunito Sans, sans-serif' }}
-            />
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              value={form.confirmPassword}
-              onChange={handleChange}
-              required
-              disabled={loading}
-              className="border border-[#b8f772] px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#b8f772] bg-white text-[#020202] disabled:opacity-50"
-              style={{ fontFamily: 'Nunito Sans, sans-serif' }}
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 bg-[#b8f772] hover:bg-[#020202] hover:text-[#f1f3f0] text-[#020202] font-bold rounded-lg transition shadow mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ fontFamily: 'Lexend Deca, sans-serif' }}
-            >
-              {loading ? (
-                <div className="flex items-center justify-center gap-2">
-                  <div className="w-4 h-4 border-2 border-current rounded-full border-t-transparent animate-spin"></div>
-                  Creating Account...
+            {/* Success Message */}
+            {success && (
+              <div className="error-message" style={{ background: 'rgba(34, 197, 94, 0.1)', borderColor: 'rgba(34, 197, 94, 0.3)', color: '#4ade80' }}>
+                {success}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="login-form">
+              <div className="form-group" style={{ flexDirection: 'row', gap: '0.5rem' }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <label htmlFor="firstName" className="form-label">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    id="firstName"
+                    placeholder="Enter your first name"
+                    value={form.firstName}
+                    onChange={handleChange}
+                    required
+                    disabled={loading}
+                    className="form-input"
+                  />
                 </div>
-              ) : (
-                'Create Account'
-              )}
-            </button>
-          </form>
-          <div className="mt-6 text-center text-[#020202] text-sm" style={{ fontFamily: 'Nunito Sans, sans-serif' }}>
-            Already have an account?{' '}
-            <Link to="/login" className="text-[#b8f772] font-semibold hover:underline">
-              Login
-            </Link>
-          </div>
-        </div>
-        {/* Right Side: Image and Description */}
-        <div className="md:w-1/2 bg-[#b8f772] flex flex-col justify-between items-center py-10 px-6 relative">
-          <img src={cityImg} alt="City" className="w-64 mx-auto mb-8 drop-shadow-xl rounded-xl border-4 border-[#f1f3f0]" />
-          <div className="text-center text-[#020202] mt-8">
-            <div className="mb-2 font-semibold" style={{ fontFamily: 'Lexend Deca, sans-serif' }}>
-              Join Mission13's climate movement
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <label htmlFor="lastName" className="form-label">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    id="lastName"
+                    placeholder="Enter your last name"
+                    value={form.lastName}
+                    onChange={handleChange}
+                    required
+                    disabled={loading}
+                    className="form-input"
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="Enter your email"
+                  value={form.email}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password" className="form-label">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  placeholder="Password (min 6 characters)"
+                  value={form.password}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="confirmPassword" className="form-label">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  id="confirmPassword"
+                  placeholder="Confirm your password"
+                  value={form.confirmPassword}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                  className="form-input"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="submit-button"
+              >
+                {loading ? (
+                  <div className="loading-content">
+                    <div className="spinner"></div>
+                    Creating Account...
+                  </div>
+                ) : (
+                  'Create Account'
+                )}
+              </button>
+            </form>
+
+            <div className="signup-link">
+              Already have an account?{' '}
+              <Link to="/login" className="signup-link-text">
+                Login
+              </Link>
             </div>
-            <div className="text-xs opacity-80" style={{ fontFamily: 'Nunito Sans, sans-serif' }}>
-              Every daily challenge builds a cleaner, more sustainable tomorrow
+          </div>
+
+          <div className="login-visual-section">
+            <div className="visual-content">
+              <img src={signupImg} alt="Climate Action" className="hero-image" />
             </div>
           </div>
         </div>
       </div>
-      {/* Extra hover and design styles */}
-      <style>
-        {`
-          .border-[#b8f772]:hover, .bg-[#b8f772]:hover {
-            box-shadow: 0 0 0 4px #b8f77244;
-          }
-          input:focus {
-            outline: none;
-            border-color: #b8f772;
-            box-shadow: 0 0 0 2px #b8f77255;
-          }
-          button[type="submit"]:hover:not(:disabled) {
-            background: #020202 !important;
-            color: #f1f3f0 !important;
-            border: 1.5px solid #b8f772;
-          }
-        `}
-      </style>
     </div>
   )
 }

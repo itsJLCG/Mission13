@@ -1,42 +1,31 @@
 import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { streakManager } from '../../utils/streakManager'
-import SettingsModal from './SettingsModal'
+import { useAuth } from '../../auth/AuthContext'
 
 const UserHeader = ({ onMenuClick }) => {
   const [displayedText, setDisplayedText] = useState('')
   const [isTyping, setIsTyping] = useState(true)
   const [showNotifications, setShowNotifications] = useState(false)
-  const [showProfileMenu, setShowProfileMenu] = useState(false)
-  const [showSettings, setShowSettings] = useState(false)
-  const [streakData, setStreakData] = useState({ currentStreak: 0, completedToday: false })
-  const location = useLocation()
-  const navigate = useNavigate()
-  
-  const welcomeMessage = "Welcome back, Eco Warrior!"
-  const isDashboard = location.pathname === '/dashboard'
-  
-  // Load streak data on component mount
-  useEffect(() => {
-    const loadStreakData = () => {
-      const data = streakManager.checkAndUpdateStreak()
-      const stats = streakManager.getStreakStats()
-      setStreakData(stats)
+  const [showProfileModal, setShowProfileModal] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [profileData, setProfileData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    profileImage: '',
+    joinDate: '',
+    preferences: {
+      notifications: true,
+      newsletter: true,
+      challenges: true,
+      tips: false
     }
-    
-    loadStreakData()
-    
-    // Listen for streak updates
-    const handleStreakUpdate = () => {
-      loadStreakData()
-    }
-    
-    window.addEventListener('streakUpdated', handleStreakUpdate)
-    return () => window.removeEventListener('streakUpdated', handleStreakUpdate)
-  }, [])
-
-  // Sample notifications data
-  const notifications = [
+  })
+  const [formData, setFormData] = useState(profileData)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [notification, setNotification] = useState(null)
+  const [notifications, setNotifications] = useState([
     {
       id: 1,
       type: 'achievement',
@@ -59,7 +48,7 @@ const UserHeader = ({ onMenuClick }) => {
       id: 3,
       type: 'streak',
       title: 'Streak Milestone!',
-      message: `You've maintained your eco-streak for ${streakData.currentStreak} days!`,
+      message: 'You\'ve maintained your eco-streak for 7 days!',
       time: '2 days ago',
       read: true,
       icon: '🔥'
@@ -73,12 +62,62 @@ const UserHeader = ({ onMenuClick }) => {
       read: true,
       icon: '💡'
     }
-  ]
+  ])
+  
+  const location = useLocation()
+  const navigate = useNavigate()
+  
+  // Get user from auth context
+  const { user, logout, login } = useAuth()
+  
+  // Create personalized welcome message
+  const getUserName = () => {
+    if (!user) return 'Eco Warrior'
+    
+    if (user.firstName && user.lastName) {
+      return `${user.firstName} ${user.lastName}`
+    }
+    if (user.firstName) {
+      return user.firstName
+    }
+    if (user.email) {
+      return user.email.split('@')[0]
+    }
+    return 'Eco Warrior'
+  }
+  
+  const welcomeMessage = `Hello, ${getUserName()}!`
+  const isDashboard = location.pathname === '/dashboard'
 
   const unreadCount = notifications.filter(n => !n.read).length
 
+  // Load user data when modal opens
+  useEffect(() => {
+    if (showProfileModal && user) {
+      const mappedData = {
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        profileImage: user.profileImage || '',
+        joinDate: user.createdAt ? new Date(user.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        preferences: {
+          notifications: user.preferences?.notifications ?? true,
+          newsletter: user.preferences?.newsletter ?? true,
+          challenges: user.preferences?.challenges ?? true,
+          tips: user.preferences?.tips ?? false
+        }
+      }
+      setProfileData(mappedData)
+      setFormData(mappedData)
+    }
+  }, [showProfileModal, user])
+
+  // Typing animation effect
   useEffect(() => {
     if (!isDashboard) return
+    
+    setDisplayedText('')
+    setIsTyping(true)
     
     let index = 0
     const typingInterval = setInterval(() => {
@@ -92,7 +131,7 @@ const UserHeader = ({ onMenuClick }) => {
     }, 100)
     
     return () => clearInterval(typingInterval)
-  }, [isDashboard])
+  }, [isDashboard, welcomeMessage])
 
   // Close modals when clicking outside
   useEffect(() => {
@@ -100,52 +139,260 @@ const UserHeader = ({ onMenuClick }) => {
       if (!event.target.closest('.notification-modal') && !event.target.closest('.notification-btn')) {
         setShowNotifications(false)
       }
-      if (!event.target.closest('.profile-menu') && !event.target.closest('.profile-btn')) {
-        setShowProfileMenu(false)
-      }
     }
 
     document.addEventListener('click', handleClickOutside)
     return () => document.removeEventListener('click', handleClickOutside)
   }, [])
 
+  // NOTIFICATION FUNCTIONALITY
   const handleNotificationClick = (notification) => {
-    // Mark as read and handle notification action
-    console.log('Notification clicked:', notification)
+    setNotifications(prev => 
+      prev.map(n => 
+        n.id === notification.id ? { ...n, read: true } : n
+      )
+    )
+    
+    switch (notification.type) {
+      case 'achievement':
+        console.log('Navigate to achievements')
+        break
+      case 'challenge':
+        navigate('/dashboard')
+        break
+      case 'streak':
+        console.log('Show streak details')
+        break
+      case 'tip':
+        console.log('Show eco tip')
+        break
+      default:
+        break
+    }
+    
     setShowNotifications(false)
   }
 
-  const handleProfileClick = () => {
-    navigate('/profile')
-    setShowProfileMenu(false)
+  const markAllAsRead = () => {
+    setNotifications(prev => 
+      prev.map(n => ({ ...n, read: true }))
+    )
+  }
+
+  const deleteNotification = (notificationId, event) => {
+    event.stopPropagation()
+    setNotifications(prev => 
+      prev.filter(n => n.id !== notificationId)
+    )
+  }
+
+  // PROFILE MODAL FUNCTIONS
+  const showNotification = (message, type = 'success') => {
+    setNotification({ message, type })
+    setTimeout(() => {
+      setNotification(null)
+    }, 4000)
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target
+    
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.')
+      setFormData(prev => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: type === 'checkbox' ? checked : value
+        }
+      }))
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value
+      }))
+    }
+  }
+
+  const handleSave = async () => {
+    if (!user) {
+      showNotification('User not found. Please login again.', 'error')
+      return
+    }
+
+    try {
+      setLoading(true)
+      setError('')
+
+      const updateData = {
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        profileImage: formData.profileImage,
+        preferences: formData.preferences
+      }
+
+      const response = await fetch('http://127.0.0.1:5000/api/user/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData)
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setProfileData(formData)
+        setIsEditing(false)
+        
+        const updatedUser = {
+          ...user,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          profileImage: formData.profileImage,
+          preferences: formData.preferences
+        }
+        
+        login(updatedUser)
+        showNotification('Profile updated successfully!', 'success')
+      } else {
+        setError(data.message || 'Failed to update profile')
+        showNotification(data.message || 'Failed to update profile. Please try again.', 'error')
+      }
+    } catch (error) {
+      console.error('Error saving profile:', error)
+      setError('Failed to connect to server')
+      showNotification('Unable to connect to server. Please check your connection and try again.', 'error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCancel = () => {
+    setFormData(profileData)
+    setIsEditing(false)
+    setError('')
   }
 
   const handleLogout = () => {
-    // Handle logout logic
-    localStorage.removeItem('user_session')
+    logout()
     navigate('/login')
+    setShowProfileModal(false)
   }
 
-  const getStreakEmoji = (streak) => {
-    if (streak >= 30) return '🔥💪'
-    if (streak >= 14) return '🔥🔥'
-    if (streak >= 7) return '🔥'
-    if (streak >= 3) return '🌟'
-    return '🌱'
+  const closeProfileModal = () => {
+    setShowProfileModal(false)
+    setIsEditing(false)
+    setError('')
+    setFormData(profileData)
   }
 
-  const getStreakMessage = (streak, completedToday) => {
-    if (completedToday) {
-      return `Amazing! ${streak} day streak! 🎉`
+  // Get user initials for profile button
+  const getUserInitials = () => {
+    if (!user) return 'U'
+    
+    if (user.firstName && user.lastName) {
+      return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
     }
-    if (streak === 0) {
-      return 'Start your eco-journey today! 💚'
+    if (user.firstName) {
+      return user.firstName[0].toUpperCase()
     }
-    return `${streak} day streak! Complete today's challenge to continue! 🚀`
+    if (user.email) {
+      return user.email[0].toUpperCase()
+    }
+    return 'U'
+  }
+
+  const getNotificationTypeColor = (type) => {
+    switch (type) {
+      case 'achievement': return 'text-yellow-600'
+      case 'challenge': return 'text-green-600'
+      case 'streak': return 'text-orange-600'
+      case 'tip': return 'text-blue-600'
+      default: return 'text-gray-600'
+    }
+  }
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Not specified'
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  }
+
+  const getInitials = (firstName, lastName) => {
+    const first = firstName?.charAt(0) || ''
+    const last = lastName?.charAt(0) || ''
+    return `${first}${last}`.toUpperCase() || 'U'
   }
 
   return (
     <>
+      {/* Enhanced Notification Toast */}
+      {notification && (
+        <div className="fixed top-6 right-6 z-[9999] w-80 animate-slide-in-right">
+          <div className={`
+            bg-white rounded-xl shadow-2xl border-l-4 overflow-hidden 
+            transform transition-all duration-300 ease-out
+            ${notification.type === 'success' 
+              ? 'border-l-[#b8f772] shadow-[#b8f772]/10' 
+              : 'border-l-red-500 shadow-red-500/10'
+            }
+          `}>
+            <div className="p-4">
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 pt-1">
+                  {notification.type === 'success' ? (
+                    <div className="w-8 h-8 bg-[#b8f772] rounded-full flex items-center justify-center">
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  ) : (
+                    <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <div className={`text-sm font-semibold ${
+                    notification.type === 'success' ? 'text-[#191b40]' : 'text-red-900'
+                  }`}>
+                    {notification.type === 'success' ? '🎉 Success!' : '❌ Error'}
+                  </div>
+                  <div className="mt-1 text-sm text-gray-600 leading-relaxed break-words">
+                    {notification.message}
+                  </div>
+                </div>
+                
+                <div className="flex-shrink-0">
+                  <button
+                    onClick={() => setNotification(null)}
+                    className="inline-flex rounded-md text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#b8f772] transition-colors duration-200"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              <div className="mt-3 h-1 bg-gray-200 rounded-full overflow-hidden">
+                <div className={`h-1 ${
+                  notification.type === 'success' ? 'bg-[#b8f772]' : 'bg-red-500'
+                } animate-progress rounded-full`}></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <header className="flex items-center justify-between px-8 py-4 relative">
         {/* Left: Welcome Message with Typing Animation (Dashboard only) */}
         <div className="flex items-center gap-4">
@@ -162,49 +409,17 @@ const UserHeader = ({ onMenuClick }) => {
           
           {/* Welcome Message - Only show on dashboard */}
           {isDashboard && (
-            <h1 className="text-4xl font-bold text-[#191b40]">
+            <h1 className="text-3xl font-bold text-black font-poppins">
               {displayedText}
               {isTyping && (
-                <span className="inline-block w-0.5 h-6 bg-[#191b40] ml-1 animate-pulse"></span>
+                <span className="inline-block w-0.5 h-6 bg-[#191b40] ml-1"></span>
               )}
             </h1>
           )}
         </div>
 
-        {/* Right: Streak Badge, Notification, & Profile */}
+        {/* Right: Notification & Profile */}
         <div className="flex items-center gap-4">
-          {/* Streak Badge */}
-          <div className="relative group flex items-center" tabIndex={0}>
-            <span
-              className={`flex items-center gap-1 px-3 py-1 rounded-full font-bold text-[#020202] text-sm bg-transparent border-2 transition-all duration-200 ${
-                streakData.completedToday 
-                  ? 'border-[#bafe40] bg-[#bafe40]/20 animate-pulse' 
-                  : 'border-[#bafe40] hover:bg-[#bafe40]/10'
-              }`}
-              style={{
-                fontWeight: 700,
-                cursor: 'pointer',
-                userSelect: 'none',
-              }}
-              title={getStreakMessage(streakData.currentStreak, streakData.completedToday)}
-            >
-              <span className="text-xl">{getStreakEmoji(streakData.currentStreak)}</span>
-              {streakData.currentStreak}-Day Streak
-            </span>
-            {/* Enhanced Tooltip */}
-            <div
-              className="absolute left-1/2 -translate-x-1/2 top-full mt-2 px-3 py-2 rounded-lg bg-black text-white text-xs opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity whitespace-nowrap z-50 max-w-xs text-center"
-              style={{ pointerEvents: 'none' }}
-            >
-              <div className="font-semibold">
-                {getStreakMessage(streakData.currentStreak, streakData.completedToday)}
-              </div>
-              <div className="text-xs opacity-80 mt-1">
-                Longest streak: {streakData.longestStreak} days
-              </div>
-            </div>
-          </div>
-
           {/* Notification Button */}
           <div className="relative">
             <button
@@ -229,47 +444,88 @@ const UserHeader = ({ onMenuClick }) => {
               )}
             </button>
 
-            {/* Notification Modal */}
+            {/* Enhanced Notification Modal */}
             {showNotifications && (
-              <div className="notification-modal absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-                <div className="p-4 border-b border-gray-200">
-                  <h3 className="text-lg font-semibold text-[#191b40]">Notifications</h3>
-                  {unreadCount > 0 && (
-                    <p className="text-sm text-gray-600">{unreadCount} new notifications</p>
-                  )}
+              <div className="notification-modal absolute right-0 top-full mt-2 w-96 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 overflow-hidden">
+                <div className="bg-gradient-to-r from-[#b8f772] to-[#a8e762] px-6 py-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-[#191b40]">Notifications</h3>
+                    <div className="flex items-center gap-2">
+                      {unreadCount > 0 && (
+                        <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                          {unreadCount} new
+                        </span>
+                      )}
+                      <button
+                        onClick={() => setShowNotifications(false)}
+                        className="text-[#191b40] hover:bg-black/10 rounded-full p-1"
+                      >
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 </div>
+                
                 <div className="max-h-96 overflow-y-auto">
-                  {notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition ${
-                        !notification.read ? 'bg-blue-50' : ''
-                      }`}
-                      onClick={() => handleNotificationClick(notification)}
-                    >
-                      <div className="flex items-start gap-3">
-                        <span className="text-2xl flex-shrink-0">{notification.icon}</span>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <h4 className="text-sm font-semibold text-[#191b40] truncate">
-                              {notification.title}
-                            </h4>
-                            {!notification.read && (
-                              <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></span>
-                            )}
+                  {notifications.length === 0 ? (
+                    <div className="p-8 text-center text-gray-500">
+                      <div className="text-4xl mb-2">🔔</div>
+                      <p>No notifications yet</p>
+                    </div>
+                  ) : (
+                    notifications.map((notification) => (
+                      <div
+                        key={notification.id}
+                        className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition group ${
+                          !notification.read ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
+                        }`}
+                        onClick={() => handleNotificationClick(notification)}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`text-2xl flex-shrink-0 ${getNotificationTypeColor(notification.type)}`}>
+                            {notification.icon}
                           </div>
-                          <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
-                          <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <h4 className="text-sm font-semibold text-[#191b40] truncate">
+                                {notification.title}
+                              </h4>
+                              <div className="flex items-center gap-2">
+                                {!notification.read && (
+                                  <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></span>
+                                )}
+                                <button
+                                  onClick={(e) => deleteNotification(notification.id, e)}
+                                  className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 p-1"
+                                  title="Delete notification"
+                                >
+                                  <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2"/>
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-1 line-clamp-2">{notification.message}</p>
+                            <p className="text-xs text-gray-500 mt-2">{notification.time}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
-                <div className="p-4 border-t border-gray-200">
-                  <button className="w-full text-center text-sm text-[#b8f772] hover:text-[#a8e762] font-medium">
-                    Mark all as read
-                  </button>
-                </div>
+                
+                {notifications.length > 0 && unreadCount > 0 && (
+                  <div className="p-4 border-t border-gray-200 bg-gray-50">
+                    <button 
+                      onClick={markAllAsRead}
+                      className="w-full text-center text-sm text-[#191b40] hover:text-[#b8f772] font-medium py-2 hover:bg-white rounded-lg transition"
+                    >
+                      Mark all as read
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -277,88 +533,167 @@ const UserHeader = ({ onMenuClick }) => {
           {/* User Profile Button */}
           <div className="relative">
             <button
-              className="profile-btn w-10 h-10 rounded-full bg-lime-400 flex items-center justify-center text-gray-900 font-bold text-lg hover:bg-lime-500 transition"
+              className="profile-btn w-10 h-10 rounded-full bg-lime-400 flex items-center justify-center text-gray-900 font-bold text-lg hover:bg-lime-500 transition shadow-lg"
               aria-label="User Profile"
-              onClick={() => setShowProfileMenu(!showProfileMenu)}
+              onClick={() => setShowProfileModal(!showProfileModal)}
             >
-              <span>U</span>
+              <span>{getUserInitials()}</span>
             </button>
-
-            {/* Profile Menu */}
-            {showProfileMenu && (
-              <div className="profile-menu absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-                <div className="p-2">
-                  <button
-                    onClick={handleProfileClick}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition flex items-center gap-2"
-                  >
-                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="text-gray-500">
-                      <path
-                        d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    View Profile
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowSettings(true)
-                      setShowProfileMenu(false)
-                    }}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition flex items-center gap-2"
-                  >
-                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="text-gray-500">
-                      <path
-                        d="M12 15a3 3 0 100-6 3 3 0 000 6z"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    Settings
-                  </button>
-                  <hr className="my-2" />
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition flex items-center gap-2"
-                  >
-                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="text-red-500">
-                      <path
-                        d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    Log Out
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </header>
 
-      {/* Settings Modal */}
-      {showSettings && (
-        <SettingsModal 
-          isOpen={showSettings} 
-          onClose={() => setShowSettings(false)}
-          streakData={streakData}
-        />
-      )}
+     {showProfileModal && (
+  <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 font-[Poppins]">
+    <div className="relative bg-[#fcfbec] rounded-2xl p-6 border-2 border-black shadow-[0_6px_0_rgba(0,0,0,0.8)] backdrop-blur-sm transition-all duration-300 w-full max-w-md mt-2">
+
+      {/* Close Button */}
+      <button
+        onClick={closeProfileModal}
+        className="absolute top-4 right-4 text-gray-500 hover:text-black p-2 rounded-full hover:bg-black/10 transition"
+        aria-label="Close modal"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      {/* Avatar & Info */}
+      <div className="flex flex-col items-center text-center mb-6">
+        <div className="w-24 h-24 rounded-full bg-[#599645] flex items-center justify-center mb-3">
+          <span className="text-3xl font-bold text-white">
+            {getInitials(profileData.firstName, profileData.lastName)}
+          </span>
+        </div>
+
+        {!isEditing && (
+          <>
+            <h3 className="text-lg font-semibold text-[#184b3e]">
+              {profileData.firstName} {profileData.lastName}
+            </h3>
+            <p className="text-sm text-gray-600">
+              Joined {formatDate(profileData.joinDate)}
+            </p>
+          </>
+        )}
+      </div>
+
+      {/* Profile Form */}
+      <div className="space-y-4">
+        {/* First + Last Name Side-by-Side */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-[#184b3e] mb-1">First Name</label>
+            {isEditing ? (
+              <input
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#599645]"
+              />
+            ) : (
+              <p className="text-gray-700">{profileData.firstName || 'Not specified'}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-[#184b3e] mb-1">Last Name</label>
+            {isEditing ? (
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#599645]"
+              />
+            ) : (
+              <p className="text-gray-700">{profileData.lastName || 'Not specified'}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="block text-sm font-medium text-[#184b3e] mb-1">Email</label>
+          <input
+            type="email"
+            value={profileData.email}
+            disabled
+            className="w-full px-4 py-2 border border-gray-300 bg-gray-100 rounded-md text-gray-700"
+          />
+        </div>
+      </div>
+
+      {/* Buttons */}
+      <div className="flex flex-col items-center gap-3 mt-6">
+        {isEditing ? (
+          <div className="flex gap-3">
+            <button
+              onClick={handleCancel}
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={loading}
+              className="px-4 py-2 bg-[#599645] text-white rounded-md hover:bg-[#4b8539] transition font-semibold disabled:opacity-50"
+            >
+              {loading ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setIsEditing(true)}
+            className="px-5 py-2 bg-[#d8e84e] text-[#184b3e] rounded-lg hover:bg-[#cfe043] transition font-semibold"
+          >
+            Edit Profile
+          </button>
+        )}
+
+        <button
+          onClick={handleLogout}
+          className="w-full px-4 py-3 text-red-600 border border-red-300 hover:bg-red-50 rounded-lg transition font-medium"
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+      {/* Add CSS animations */}
+      <style jsx>{`
+        @keyframes slide-in-right {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        
+        @keyframes progress {
+          from {
+            width: 100%;
+          }
+          to {
+            width: 0%;
+          }
+        }
+        
+        .animate-slide-in-right {
+          animation: slide-in-right 0.3s ease-out;
+        }
+        
+        .animate-progress {
+          animation: progress 4s linear forwards;
+        }
+      `}</style>
     </>
   )
 }
