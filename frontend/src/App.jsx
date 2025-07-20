@@ -10,6 +10,7 @@ import UserDashboard from './pages/UserDashboard'
 import Game from './pages/Game'
 import Chatbot from './pages/Chatbot'
 import UserProfile from './pages/UserProfile'
+import AdminDashboard from './pages/AdminDashboard/AdminDashboard' // <-- Add this import
 
 
 // Layout for conditional header/footer if needed in the future
@@ -55,6 +56,11 @@ const App = () => (
             </ProtectedRoute>
           } />
           
+          <Route path="/admin/*" element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
           {/* Catch all route - redirect to login */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
