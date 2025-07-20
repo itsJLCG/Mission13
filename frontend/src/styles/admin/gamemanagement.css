@@ -1,0 +1,441 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.game-container {
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 15px;
+  min-height: 100vh;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #184b3e;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Action Buttons Section */
+.action-buttons-section {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, #184b3e 0%, #599645 100%) !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 8px 18px !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  text-transform: none !important;
+  box-shadow: 0 3px 12px rgba(24, 75, 62, 0.25) !important;
+  transition: all 0.3s ease !important;
+}
+
+.primary-button:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 5px 15px rgba(24, 75, 62, 0.35) !important;
+}
+
+.secondary-button {
+  border: 2px solid #599645 !important;
+  color: #184b3e !important;
+  border-radius: 8px !important;
+  padding: 6px 18px !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  text-transform: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.secondary-button:hover {
+  background: rgba(89, 150, 69, 0.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Analytics Section */
+.analytics-section {
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: center;
+}
+
+.analytics-section .MuiGrid-container {
+  max-width: 1000px !important;
+  margin: 0 auto !important;
+  justify-content: center !important;
+}
+
+.analytics-section .MuiGrid-item {
+  padding: 12px !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.chart-card {
+  background: linear-gradient(135deg, #ffffff 0%, #fafffe 100%);
+  border-radius: 12px;
+  box-shadow: 
+    0 4px 15px rgba(24, 75, 62, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(200, 217, 130, 0.15);
+  padding: 18px;
+  transition: all 0.3s ease;
+  width: 100%;
+  height: 300px; /* Fixed height for equal sizes */
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  max-height: 300px;
+}
+
+.chart-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(24, 75, 62, 0.12),
+    0 3px 8px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(89, 150, 69, 0.3);
+}
+
+.chart-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #184b3e;
+  margin-bottom: 15px;
+  text-align: center;
+  position: relative;
+  flex-shrink: 0;
+  height: auto;
+}
+
+.chart-title::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 2px;
+  background: linear-gradient(90deg, #184b3e, #599645);
+}
+
+.chart-container {
+  height: 220px; /* Fixed height for chart area */
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.heatmap-container {
+  height: 220px; /* Same height as chart containers */
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.heatmap-table {
+  height: 100%;
+}
+
+.heatmap-table .MuiTableCell-root {
+  padding: 8px 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  border-bottom: 1px solid rgba(24, 75, 62, 0.1);
+}
+
+.heatmap-table .MuiTableCell-head {
+  background-color: rgba(24, 75, 62, 0.08);
+  font-weight: 600;
+  color: #184b3e;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.heatmap-table .MuiTableRow-root {
+  transition: all 0.2s ease;
+}
+
+/* Force equal sizing on all screen sizes */
+@media (min-width: 600px) {
+  .analytics-section .MuiGrid-item {
+    flex-basis: 50% !important;
+    max-width: 50% !important;
+    min-width: 45% !important;
+  }
+  
+  .chart-card {
+    width: 100% !important;
+    min-width: 400px;
+    max-width: 480px;
+  }
+}
+
+/* Mobile: 1 chart per row */
+@media (max-width: 599px) {
+  .analytics-section .MuiGrid-item {
+    flex-basis: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .chart-card {
+    height: 280px;
+    min-height: 280px;
+    max-height: 280px;
+    min-width: auto;
+    max-width: 100%;
+  }
+  
+  .chart-container, .heatmap-container {
+    height: 200px;
+  }
+}
+
+/* Large screens: center with max width */
+@media (min-width: 1200px) {
+  .analytics-section .MuiGrid-container {
+    max-width: 1000px !important;
+  }
+  
+  .chart-card {
+    min-width: 450px;
+    max-width: 500px;
+  }
+}
+
+/* Table Card */
+.table-card {
+  background: linear-gradient(135deg, #ffffff 0%, #fafffe 100%);
+  border-radius: 12px;
+  box-shadow: 
+    0 6px 20px rgba(24, 75, 62, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(200, 217, 130, 0.15);
+  padding: 18px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.table-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(24,75,62,0.02), rgba(89,150,69,0.02));
+  border-radius: inherit;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+.table-card:hover {
+  transform: translateY(-2px) scale(1.005);
+  box-shadow: 
+    0 10px 25px rgba(24, 75, 62, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(89, 150, 69, 0.3);
+}
+
+.table-card:hover::before {
+  opacity: 1;
+}
+
+.table-header {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.table-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #184b3e;
+  margin-bottom: 4px;
+  position: relative;
+}
+
+.table-title::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #184b3e, #599645);
+}
+
+.table-description {
+  font-size: 11px;
+  color: #6b7280;
+  font-style: italic;
+  margin-bottom: 0;
+}
+
+.table-container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Compact Table Styling */
+.table-container .MuiTableContainer-root {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.table-container .MuiTable-root {
+  font-size: 0.8rem;
+}
+
+.table-container .MuiTableCell-root {
+  padding: 6px 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table-container .MuiTableCell-head {
+  background-color: rgba(24, 75, 62, 0.08);
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: #184b3e;
+  border-bottom: 2px solid rgba(24, 75, 62, 0.2);
+}
+
+.table-container .MuiTableRow-root:hover {
+  background-color: rgba(89, 150, 69, 0.05) !important;
+}
+
+/* Custom Dialog Styling */
+.custom-dialog .MuiDialog-paper {
+  background: linear-gradient(135deg, #ffffff 0%, #fafffe 100%);
+  border-radius: 12px !important;
+  box-shadow: 0 15px 50px rgba(24, 75, 62, 0.15) !important;
+  border: 1px solid rgba(200, 217, 130, 0.2);
+}
+
+.dialog-title {
+  background: linear-gradient(135deg, #184b3e 0%, #599645 100%);
+  color: white !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  text-align: center;
+  padding: 12px 20px !important;
+}
+
+.dialog-content {
+  padding: 18px !important;
+  background: rgba(248, 255, 254, 0.5);
+}
+
+.dialog-actions {
+  padding: 12px 18px !important;
+  background: rgba(248, 255, 254, 0.8);
+  border-top: 1px solid rgba(200, 217, 130, 0.2);
+  justify-content: center !important;
+}
+
+.analytics-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.detail-item {
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(24, 75, 62, 0.05);
+  border-left: 3px solid #599645;
+}
+
+.detail-label {
+  font-weight: 600 !important;
+  color: #184b3e !important;
+  font-family: 'Poppins', sans-serif !important;
+  margin-bottom: 5px !important;
+}
+
+.detail-value {
+  color: #333 !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 500 !important;
+}
+
+.cancel-button {
+  color: #6b7280 !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 6px !important;
+  padding: 8px 16px !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 0.8rem !important;
+  text-transform: none !important;
+  min-width: 100px !important;
+}
+
+.cancel-button:hover {
+  background: rgba(107, 114, 128, 0.1) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .action-buttons-section {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .analytics-details {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-container {
+    padding: 10px;
+  }
+  
+  .chart-card, .table-card {
+    padding: 15px;
+  }
+  
+  .chart-container {
+    height: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  
+  .table-title {
+    font-size: 14px;
+  }
+  
+  .chart-container {
+    height: 140px;
+  }
+  
+  .table-container .MuiTableCell-root {
+    padding: 4px 6px;
+    font-size: 0.75rem;
+  }
+}
