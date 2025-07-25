@@ -10,4 +10,304 @@
     linear-gradient(135deg, #eef7b4 0%, #d8e84e 20%, #97c661 40%, #eef7b4 100%);
   font-family: 'Nunito Sans', sans-serif;
   position: relative;
-} 
+}
+
+/* Isometric City Game Styles */
+.isometric-canvas {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.building-tools-grid {
+  display: grid;
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.building-tool {
+  width: 65px;
+  height: 115px;
+  border: 2px solid #d1d5db;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-size: auto;
+  background-repeat: no-repeat;
+  border-radius: 4px;
+}
+
+.building-tool:hover {
+  border-color: #6b7280;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.building-tool.selected {
+  border-color: #dc2626;
+  background-color: #fef2f2;
+}
+
+.building-tool.has-action {
+  border-color: #10b981;
+}
+
+.building-tool.has-action:hover {
+  border-color: #059669;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+/* Carbon Gauge Animations */
+@keyframes bubble-float {
+  0% {
+    transform: translateY(0px);
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+}
+
+.co2-bubble {
+  animation: bubble-float 2s infinite;
+}
+
+/* Building Tools Improvements */
+.building-tool-container {
+  position: relative;
+  z-index: 1;
+  width: 130px !important;  /* ← Add this */
+  height: 230px !important; /* ← Add this */
+}
+
+.building-tool-container:hover {
+  z-index: 100;
+}
+
+.building-tool-fixed {
+  width: 130px !important;      /* ← Change from 65px to 130px */
+  height: 230px !important;     /* ← Change from 100px to 230px */
+  border: 2px dashed transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-size: auto !important;  /* ← Change to auto */
+  background-repeat: no-repeat !important;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Ensure precise image positioning */
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  box-sizing: border-box;
+}
+
+.building-tool-fixed:hover {
+  border-color: #6b7280;
+  transform: scale(1.02) translateY(-2px);  /* ← Reduce scale to 1.02 for larger items */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.building-tool-fixed.selected {
+  border-color: #dc2626 !important;
+  background-color: rgba(254, 242, 242, 0.3);
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+  transform: scale(1.03);  /* ← Reduce scale for larger items */
+}
+
+.building-tool-fixed.has-action {
+  border-color: #10b981 !important;
+  background-color: rgba(236, 253, 245, 0.3);
+}
+
+.building-tool-fixed.has-action:hover {
+  border-color: #059669 !important;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+  background-color: rgba(236, 253, 245, 0.5);
+}
+
+.building-tool-fixed.selected.has-action {
+  border-color: #059669 !important;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+}
+
+/* Update responsive sizes too */
+@media (max-width: 768px) {
+  .building-tool-fixed {
+    width: 100px !important;   /* ← Reduce for mobile but keep proportional */
+    height: 180px !important;
+    background-size: auto !important;
+  }
+  
+  .building-tool-container {
+    width: 100px !important;
+    height: 180px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .building-tool-fixed {
+    width: 80px !important;    /* ← Smaller for very small screens */
+    height: 150px !important;
+    background-size: auto !important;
+  }
+  
+  .building-tool-container {
+    width: 80px !important;
+    height: 150px !important;
+  }
+  
+  .building-tool-tooltip-container > div {
+    font-size: 10px;
+    padding: 8px;
+    max-width: 200px;
+  }
+}
+
+/* Building tool with no action - red border */
+.building-tool-fixed.no-action {
+  border-color: #dc2626 !important;
+  background-color: rgba(254, 242, 242, 0.2);
+}
+
+.building-tool-fixed.no-action:hover {
+  border-color: #b91c1c !important;
+  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.25);
+  background-color: rgba(254, 242, 242, 0.4);
+}
+
+.building-tool-fixed.selected.no-action {
+  border-color: #991b1b !important;
+  box-shadow: 0 0 25px rgba(220, 38, 38, 0.4);
+}
+
+/* Ensure building tools container allows overflow for tooltips */
+.building-tool-container {
+  position: relative;
+  z-index: 1;
+  width: 130px !important;
+  height: 230px !important;
+  overflow: visible !important; /* ← Ensure tooltips can overflow */
+}
+
+.building-tool-container:hover {
+  z-index: 100;
+}
+
+/* Override any parent overflow restrictions */
+.building-tools-panel,
+.building-tools-panel > *,
+[class*="building-tool"] {
+  overflow: visible !important;
+}
+
+/* Tooltip container improvements */
+.building-tool-tooltip-container {
+  position: absolute;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  overflow: visible !important;
+}
+
+/* Ensure tooltips are always visible */
+.building-tool-tooltip-container > div {
+  background: rgba(17, 24, 39, 0.95);
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  white-space: nowrap;
+  max-width: 280px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  position: relative;
+  z-index: 1001;
+}
+
+/* CO2 Meter Styles - Simple positioning */
+.co2-floating-meter {
+  width: 200px;
+  animation: float-in 0.6s ease-out;
+}
+
+.co2-floating-meter:hover {
+  transform: scale(1.02);
+  transition: transform 0.2s ease;
+}
+
+/* Floating animation */
+@keyframes float-in {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Floating particles */
+.co2-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.co2-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  animation: particle-float linear infinite;
+}
+
+@keyframes particle-float {
+  0% {
+    opacity: 0;
+    transform: translateY(100px) scale(0);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(80px) scale(1);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0);
+  }
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .co2-floating-meter {
+    width: 160px;
+  }
+}
+
+@media (max-width: 640px) {
+  .co2-floating-meter {
+    width: 140px;
+  }
+}

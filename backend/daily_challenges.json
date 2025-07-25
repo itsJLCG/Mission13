@@ -1,13 +1,13 @@
 {
-  "last_generated": "2025-07-18T15:04:05.371542",
+  "last_generated": "2025-07-25T22:04:38.032284",
   "current_challenge": {
-    "title": "Plastic-Free Day Challenge",
-    "description": "For one day, commit to not using any single-use plastics. Prepare by packing a reusable water bottle, using cloth bags for shopping, and bringing your own containers for food. Avoid items like plastic straws, cutlery, and bags. Share your experience on social media to inspire others and reflect on the impact of plastic pollution.",
-    "impact": "Reducing single-use plastics helps decrease pollution in oceans and landfills, protects wildlife, and promotes a more sustainable lifestyle.",
-    "difficulty": "Medium",
-    "id": "daily_20250718",
-    "generated_at": "2025-07-18T15:04:11.460218",
-    "expires_at": "2025-07-19T00:00:00",
+    "title": "Meatless Monday",
+    "description": "For today, commit to going meatless for all your meals. Try out some tasty vegetarian or vegan recipes to reduce your carbon footprint and water usage.",
+    "impact": "Eating a plant-based diet has a lower carbon footprint than a meat-heavy diet, as livestock production accounts for a significant amount of greenhouse gas emissions.",
+    "difficulty": "Easy",
+    "id": "daily_20250725",
+    "generated_at": "2025-07-25T22:04:52.645608",
+    "expires_at": "2025-07-26T00:00:00",
     "type": "daily"
   }
 }

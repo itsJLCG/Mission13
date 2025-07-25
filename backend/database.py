@@ -30,7 +30,16 @@ class Database:
             raise e
     
     def get_users_collection(self):
+        """Get users collection"""
         return self.db['users']
+    
+    def get_carbon_emission_collection(self):
+        """Get carbon emission collection"""
+        return self.db['carbonemission']
+    
+    def get_daily_challenges_collection(self):
+        """Get daily challenges collection"""
+        return self.db['dailyChallenges']
     
     def close_connection(self):
         if self.client:

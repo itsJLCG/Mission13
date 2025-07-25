@@ -2,6 +2,11 @@ from flask import Blueprint, request, jsonify
 import sys
 import os
 
+from database import db_instance
+import json
+from bson import ObjectId
+from datetime import datetime
+
 # Add the backend directory to Python path
 backend_path = os.path.join(os.path.dirname(__file__), '..', 'backend')
 sys.path.insert(0, backend_path)
@@ -201,3 +206,333 @@ def generate_new_challenge():
 def health_check():
     """Health check endpoint"""
     return jsonify({"status": "healthy", "message": "API is running"}), 200
+
+
+@api.route('/api/city-map/save', methods=['POST'])
+def save_city_map():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        city_map = data.get('cityMap')
+        
+        if not email or not city_map:
+            return jsonify({'success': False, 'message': 'Email and city map are required'}), 400
+        
+        # Get users collection
+        users_collection = db_instance.get_users_collection()
+        
+        # Check if user exists and update/create city map
+        user = users_collection.find_one({'email': email})
+        
+        if not user:
+            return jsonify({'success': False, 'message': 'User not found'}), 404
+        
+        # Create city map document
+        city_map_data = {
+            'email': email,
+            'cityMap': city_map,
+            'updatedAt': datetime.utcnow(),
+            'createdAt': datetime.utcnow() if 'cityMap' not in user else user.get('cityMap', {}).get('createdAt', datetime.utcnow())
+        }
+        
+        # Update user document with city map
+        result = users_collection.update_one(
+            {'email': email},
+            {
+                '$set': {
+                    'cityMap': city_map_data
+                }
+            }
+        )
+        
+        if result.modified_count > 0 or result.matched_count > 0:
+            return jsonify({'success': True, 'message': 'City map saved successfully'})
+        else:
+            return jsonify({'success': False, 'message': 'Failed to save city map'}), 500
+        
+    except Exception as e:
+        print(f"Error saving city map: {e}")
+        return jsonify({'success': False, 'message': 'Failed to save city map'}), 500
+
+@api.route('/api/city-map/load', methods=['POST'])
+def load_city_map():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        
+        if not email:
+            return jsonify({'success': False, 'message': 'Email is required'}), 400
+        
+        # Get users collection
+        users_collection = db_instance.get_users_collection()
+        
+        # Find user and get city map
+        user = users_collection.find_one({'email': email}, {'cityMap': 1})
+        
+        if user and 'cityMap' in user:
+            city_map = user['cityMap']['cityMap']
+            return jsonify({'success': True, 'cityMap': city_map})
+        else:
+            # Return empty city map if none exists
+            return jsonify({'success': True, 'cityMap': None})
+            
+    except Exception as e:
+        print(f"Error loading city map: {e}")
+        return jsonify({'success': False, 'message': 'Failed to load city map'}), 500
+    
+@api.route('/api/carbon-emission/save', methods=['POST'])
+def save_carbon_emission():
+    """Save carbon emission data for a user"""
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        emission = data.get('emission')
+        
+        if not email:
+            return jsonify({'success': False, 'message': 'Email is required'}), 400
+        
+        if emission is None:
+            return jsonify({'success': False, 'message': 'Emission value is required'}), 400
+        
+        # Validate emission is a number
+        try:
+            emission_value = float(emission)
+            # Round to 4 decimal places
+            emission_value = round(emission_value, 4)
+        except (ValueError, TypeError):
+            return jsonify({'success': False, 'message': 'Invalid emission value'}), 400
+        
+        # Get collections
+        users_collection = db_instance.get_users_collection()
+        carbon_collection = db_instance.get_carbon_emission_collection()
+        
+        # Verify user exists
+        user = users_collection.find_one({'email': email})
+        if not user:
+            return jsonify({'success': False, 'message': 'User not found'}), 404
+        
+        # Create carbon emission document
+        carbon_data = {
+            'email': email,
+            'userId': user.get('_id'),
+            'emission': emission_value,
+            'timestamp': datetime.utcnow(),
+            'createdAt': datetime.utcnow()
+        }
+        
+        # Insert or update carbon emission record
+        # Check if there's already a record for this user
+        existing_record = carbon_collection.find_one({'email': email})
+        
+        if existing_record:
+            # Update existing record
+            result = carbon_collection.update_one(
+                {'email': email},
+                {
+                    '$set': {
+                        'emission': emission_value,
+                        'timestamp': datetime.utcnow()
+                    }
+                }
+            )
+            
+            if result.modified_count > 0:
+                return jsonify({'success': True, 'message': 'Carbon emission updated successfully'})
+            else:
+                return jsonify({'success': False, 'message': 'Failed to update carbon emission'}), 500
+        else:
+            # Insert new record
+            result = carbon_collection.insert_one(carbon_data)
+            
+            if result.inserted_id:
+                return jsonify({'success': True, 'message': 'Carbon emission saved successfully'})
+            else:
+                return jsonify({'success': False, 'message': 'Failed to save carbon emission'}), 500
+        
+    except Exception as e:
+        print(f"Error saving carbon emission: {e}")
+        return jsonify({'success': False, 'message': 'Failed to save carbon emission'}), 500
+
+@api.route('/api/carbon-emission/load', methods=['POST'])
+def load_carbon_emission():
+    """Load carbon emission data for a user"""
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        
+        if not email:
+            return jsonify({'success': False, 'message': 'Email is required'}), 400
+        
+        # Get carbon emission collection
+        carbon_collection = db_instance.get_carbon_emission_collection()
+        
+        # Find carbon emission record for user
+        carbon_record = carbon_collection.find_one({'email': email})
+        
+        if carbon_record:
+            # Convert ObjectId to string for JSON serialization
+            carbon_record['_id'] = str(carbon_record['_id'])
+            if 'userId' in carbon_record:
+                carbon_record['userId'] = str(carbon_record['userId'])
+            
+            return jsonify({
+                'success': True, 
+                'carbonEmission': {
+                    'emission': carbon_record['emission'],
+                    'timestamp': carbon_record['timestamp'].isoformat() if carbon_record.get('timestamp') else None,
+                    'createdAt': carbon_record['createdAt'].isoformat() if carbon_record.get('createdAt') else None
+                }
+            })
+        else:
+            # Return default emission if no record exists
+            return jsonify({
+                'success': True, 
+                'carbonEmission': {
+                    'emission': 100.0000,
+                    'timestamp': None,
+                    'createdAt': None
+                }
+            })
+            
+    except Exception as e:
+        print(f"Error loading carbon emission: {e}")
+        return jsonify({'success': False, 'message': 'Failed to load carbon emission'}), 500
+
+@api.route('/api/carbon-emission/history', methods=['POST'])
+def get_carbon_emission_history():
+    """Get carbon emission history for a user (for future use)"""
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        limit = data.get('limit', 10)  # Default to last 10 records
+        
+        if not email:
+            return jsonify({'success': False, 'message': 'Email is required'}), 400
+        
+        # Get carbon emission collection
+        carbon_collection = db_instance.get_carbon_emission_collection()
+        
+        # Find all carbon emission records for user, sorted by timestamp (newest first)
+        carbon_records = list(carbon_collection.find(
+            {'email': email}
+        ).sort('timestamp', -1).limit(limit))
+        
+        # Convert ObjectIds to strings for JSON serialization
+        for record in carbon_records:
+            record['_id'] = str(record['_id'])
+            if 'userId' in record:
+                record['userId'] = str(record['userId'])
+            if 'timestamp' in record and record['timestamp']:
+                record['timestamp'] = record['timestamp'].isoformat()
+            if 'createdAt' in record and record['createdAt']:
+                record['createdAt'] = record['createdAt'].isoformat()
+        
+        return jsonify({
+            'success': True, 
+            'history': carbon_records,
+            'count': len(carbon_records)
+        })
+            
+    except Exception as e:
+        print(f"Error loading carbon emission history: {e}")
+        return jsonify({'success': False, 'message': 'Failed to load carbon emission history'}), 500
+    
+
+@api.route('/api/daily-challenges/save', methods=['POST'])
+def save_daily_challenge():
+    """Save current AI-generated daily challenge to database (alternative endpoint)"""
+    try:
+        # Get current daily challenge
+        current_challenge = daily_challenge_manager.get_daily_challenge()
+        
+        if not current_challenge:
+            return jsonify({'success': False, 'message': 'No current challenge available'}), 404
+        
+        # Save to database using the daily challenge manager
+        success = daily_challenge_manager.save_challenge_to_database(current_challenge)
+        
+        if success:
+            return jsonify({
+                'success': True, 
+                'message': 'Current daily challenge saved to database',
+                'challenge': current_challenge
+            }), 200
+        else:
+            return jsonify({'success': False, 'message': 'Failed to save challenge to database'}), 500
+            
+    except Exception as e:
+        print(f"Error saving daily challenge: {e}")
+        return jsonify({'success': False, 'message': 'Failed to save daily challenge'}), 500
+
+# Add update and delete endpoints too
+@api.route('/api/daily-challenges/<challenge_id>', methods=['PUT'])
+def update_daily_challenge(challenge_id):
+    """Update an existing daily challenge"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+        
+        challenges_collection = db_instance.get_daily_challenges_collection()
+        
+        # Prepare update data
+        update_data = {
+            'updatedAt': datetime.utcnow()
+        }
+        
+        # Update allowed fields
+        allowed_fields = ['challenge', 'description', 'rewardPoints', 'difficulty', 'impact', 'isActive']
+        for field in allowed_fields:
+            if field in data:
+                update_data[field] = data[field]
+        
+        # Update in database
+        result = challenges_collection.update_one(
+            {'_id': ObjectId(challenge_id)},
+            {'$set': update_data}
+        )
+        
+        if result.modified_count > 0:
+            # Get updated challenge
+            updated_challenge = challenges_collection.find_one({'_id': ObjectId(challenge_id)})
+            if updated_challenge:
+                updated_challenge['_id'] = str(updated_challenge['_id'])
+                if 'createdAt' in updated_challenge:
+                    updated_challenge['createdAt'] = updated_challenge['createdAt'].isoformat()
+                if 'updatedAt' in updated_challenge:
+                    updated_challenge['updatedAt'] = updated_challenge['updatedAt'].isoformat()
+                if 'expiresAt' in updated_challenge:
+                    updated_challenge['expiresAt'] = updated_challenge['expiresAt'].isoformat()
+            
+            return jsonify({
+                'success': True,
+                'message': 'Daily challenge updated successfully',
+                'challenge': updated_challenge
+            }), 200
+        else:
+            return jsonify({'success': False, 'message': 'Challenge not found or no changes made'}), 404
+            
+    except Exception as e:
+        print(f"Error updating daily challenge: {e}")
+        return jsonify({'success': False, 'message': 'Failed to update daily challenge'}), 500
+
+@api.route('/api/daily-challenges/<challenge_id>', methods=['DELETE'])
+def delete_daily_challenge(challenge_id):
+    """Delete a daily challenge"""
+    try:
+        challenges_collection = db_instance.get_daily_challenges_collection()
+        
+        result = challenges_collection.delete_one({'_id': ObjectId(challenge_id)})
+        
+        if result.deleted_count > 0:
+            return jsonify({
+                'success': True,
+                'message': 'Daily challenge deleted successfully'
+            }), 200
+        else:
+            return jsonify({'success': False, 'message': 'Challenge not found'}), 404
+            
+    except Exception as e:
+        print(f"Error deleting daily challenge: {e}")
+        return jsonify({'success': False, 'message': 'Failed to delete daily challenge'}), 500

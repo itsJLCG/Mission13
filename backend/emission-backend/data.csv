@@ -1,0 +1,44 @@
+action,sector,min_gtco2,max_gtco2,cost
+Add solar power,Energy,4.0,5.0,<$50
+Add onshore wind,Energy,2.5,4.0,<$50
+Add offshore wind,Energy,0.5,1.0,$50-$100
+Add CCGT with CCS,Energy,1.0,2.0,$50-$100
+Add bioenergy + CCS,Energy,1.5,3.0,$100+
+Add geothermal,Energy,0.1,0.3,$50-$100
+Add hydropower,Energy,0.2,0.5,<$50
+Add nuclear,Energy,0.3,0.6,$50-$100
+Install building insulation,Buildings,1.0,1.5,<$20
+Use efficient appliances,Buildings,0.5,1.0,Cost-saving
+Expand district heating,Buildings,0.2,0.4,$20-$50
+Install improved cookstoves,Buildings,0.3,0.6,Cost-saving
+Install rooftop solar,Buildings,1.0,2.0,$20-$50
+Use electric vehicles,Transport,2.0,3.0,$50-$100
+Use hybrid vehicles,Transport,0.5,1.0,$20-$50
+Use fuel-efficient ICE vehicles,Transport,0.8,1.2,Cost-saving
+Use biofuels,Transport,0.3,0.5,$100+
+Use public transport,Transport,1.0,1.5,$20-$50
+Use cycling & walking,Transport,0.5,1.2,Cost-saving
+Improve freight efficiency,Transport,0.4,0.7,$20-$50
+Shift freight modes,Transport,0.2,0.5,$50-$100
+Improve industrial efficiency,Industry,1.0,2.0,<$50
+Use heat recovery & CHP,Industry,0.5,1.0,$20-$50
+Use hydrogen/electrification,Industry,0.3,0.8,$100+
+Apply industrial CCS,Industry,1.0,2.5,$100+
+Recycle materials,Industry,0.4,0.9,Cost-saving
+Improve cement/steel,Industry,0.3,0.7,$50-$100
+Avoid deforestation,Land Use,3.0,5.0,<$50
+Do afforestation,Land Use,2.0,4.0,$20-$50
+Manage plants,Land Use,0.5,1.0,$20-$50
+Apply soil carbon sequestration,Land Use,1.5,2.5,<$20
+Apply biochar,Land Use,0.2,0.4,$50-$100
+Use improved crop practices,Land Use,0.4,0.8,<$20
+Reduce rice methane,Land Use,0.3,0.5,$20-$50
+Manage livestock,Land Use,0.8,1.5,$20-$50
+Improve agri-drainage,Land Use,0.1,0.3,$20-$50
+Capture landfill methane,Waste,0.4,0.9,<$20
+Recycle waste,Waste,0.5,1.0,Cost-saving
+Treat wastewater,Waste,0.2,0.4,$20-$50
+Adopt plant-based diets,Demand,1.0,2.0,Cost-saving
+Reduce food waste,Demand,0.5,1.5,Cost-saving
+Reduce air travel,Demand,0.3,0.8,$50-$100
+Adopt compact urban design,Buildings,0.5,1.0,<$50
