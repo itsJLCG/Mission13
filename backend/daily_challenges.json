@@ -1,13 +1,13 @@
 {
-  "last_generated": "2025-07-25T22:04:38.032284",
+  "last_generated": "2025-07-26T13:58:16.551442",
   "current_challenge": {
     "title": "Meatless Monday",
-    "description": "For today, commit to going meatless for all your meals. Try out some tasty vegetarian or vegan recipes to reduce your carbon footprint and water usage.",
-    "impact": "Eating a plant-based diet has a lower carbon footprint than a meat-heavy diet, as livestock production accounts for a significant amount of greenhouse gas emissions.",
+    "description": "Today, commit to going meatless for all your meals. Opt for plant-based alternatives such as fruits, vegetables, grains, and legumes. Try out a new meatless recipe for dinner to make it fun and exciting!",
+    "impact": "By skipping meat for a day, you can reduce your carbon footprint and lower greenhouse gas emissions associated with animal agriculture.",
     "difficulty": "Easy",
-    "id": "daily_20250725",
-    "generated_at": "2025-07-25T22:04:52.645608",
-    "expires_at": "2025-07-26T00:00:00",
+    "id": "daily_20250726",
+    "generated_at": "2025-07-26T13:58:19.995603",
+    "expires_at": "2025-07-27T00:00:00",
     "type": "daily"
   }
 }

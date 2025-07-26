@@ -536,3 +536,143 @@ def delete_daily_challenge(challenge_id):
     except Exception as e:
         print(f"Error deleting daily challenge: {e}")
         return jsonify({'success': False, 'message': 'Failed to delete daily challenge'}), 500
+    
+@api.route('/api/user-challenges/accept', methods=['POST'])
+def accept_user_challenge():
+    """Accept a daily challenge and save user's submission"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+        
+        # Extract required fields
+        user_email = data.get('userEmail')
+        challenge_id = data.get('challengeId')
+        description = data.get('description')
+        proof_image = data.get('proofImage')  # This could be base64 string or file path
+        
+        if not user_email or not challenge_id or not description:
+            return jsonify({
+                'success': False, 
+                'message': 'User email, challenge ID, and description are required'
+            }), 400
+        
+        # Get collections
+        users_collection = db_instance.get_users_collection()
+        user_challenges_collection = db_instance.get_user_challenges_collection()
+        
+        # Verify user exists
+        user = users_collection.find_one({'email': user_email})
+        if not user:
+            return jsonify({'success': False, 'message': 'User not found'}), 404
+        
+        # Check if user already accepted this challenge
+        existing_submission = user_challenges_collection.find_one({
+            'userEmail': user_email,
+            'challengeId': challenge_id
+        })
+        
+        if existing_submission:
+            return jsonify({
+                'success': False, 
+                'message': 'You have already accepted this challenge'
+            }), 400
+        
+        # Create user challenge document
+        user_challenge_data = {
+            'userEmail': user_email,
+            'userId': str(user.get('_id')),
+            'challengeId': challenge_id,  # Store as is, don't convert to ObjectId
+            'description': description,
+            'proofImage': proof_image,
+            'ifDone': 0,  # 0 = not done, 1 = done (to be set by admin)
+            'acceptedAt': datetime.utcnow(),
+            'createdAt': datetime.utcnow()
+        }
+        
+        # Insert user challenge
+        result = user_challenges_collection.insert_one(user_challenge_data)
+        
+        if result.inserted_id:
+            # Return success with the created record
+            user_challenge_data['_id'] = str(result.inserted_id)
+            user_challenge_data['acceptedAt'] = user_challenge_data['acceptedAt'].isoformat()
+            user_challenge_data['createdAt'] = user_challenge_data['createdAt'].isoformat()
+            
+            return jsonify({
+                'success': True,
+                'message': 'Challenge accepted successfully',
+                'userChallenge': user_challenge_data
+            }), 201
+        else:
+            return jsonify({
+                'success': False, 
+                'message': 'Failed to accept challenge'
+            }), 500
+        
+    except Exception as e:
+        print(f"Error accepting user challenge: {e}")
+        return jsonify({'success': False, 'message': 'Failed to accept challenge'}), 500
+
+@api.route('/api/user-challenges/user/<user_email>', methods=['GET'])
+def get_user_challenges(user_email):
+    """Get all challenges accepted by a specific user"""
+    try:
+        user_challenges_collection = db_instance.get_user_challenges_collection()
+        
+        # Find all challenges for the user
+        user_challenges = list(user_challenges_collection.find({'userEmail': user_email}))
+        
+        # Convert ObjectIds to strings for JSON serialization
+        for challenge in user_challenges:
+            challenge['_id'] = str(challenge['_id'])
+            if 'acceptedAt' in challenge and challenge['acceptedAt']:
+                challenge['acceptedAt'] = challenge['acceptedAt'].isoformat()
+            if 'createdAt' in challenge and challenge['createdAt']:
+                challenge['createdAt'] = challenge['createdAt'].isoformat()
+        
+        return jsonify({
+            'success': True,
+            'userChallenges': user_challenges,
+            'count': len(user_challenges)
+        }), 200
+        
+    except Exception as e:
+        print(f"Error getting user challenges: {e}")
+        return jsonify({'success': False, 'message': 'Failed to get user challenges'}), 500
+
+@api.route('/api/user-challenges/check/<user_email>/<challenge_id>', methods=['GET'])
+def check_user_challenge_status(user_email, challenge_id):
+    """Check if user has already accepted a specific challenge"""
+    try:
+        user_challenges_collection = db_instance.get_user_challenges_collection()
+        
+        # Check if user already accepted this challenge
+        existing_submission = user_challenges_collection.find_one({
+            'userEmail': user_email,
+            'challengeId': challenge_id
+        })
+        
+        if existing_submission:
+            existing_submission['_id'] = str(existing_submission['_id'])
+            if 'acceptedAt' in existing_submission and existing_submission['acceptedAt']:
+                existing_submission['acceptedAt'] = existing_submission['acceptedAt'].isoformat()
+            if 'createdAt' in existing_submission and existing_submission['createdAt']:
+                existing_submission['createdAt'] = existing_submission['createdAt'].isoformat()
+            
+            return jsonify({
+                'success': True,
+                'hasAccepted': True,
+                'userChallenge': existing_submission
+            }), 200
+        else:
+            return jsonify({
+                'success': True,
+                'hasAccepted': False,
+                'userChallenge': None
+            }), 200
+        
+    except Exception as e:
+        print(f"Error checking user challenge status: {e}")
+        return jsonify({'success': False, 'message': 'Failed to check challenge status'}), 500

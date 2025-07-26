@@ -41,6 +41,10 @@ class Database:
         """Get daily challenges collection"""
         return self.db['dailyChallenges']
     
+    def get_user_challenges_collection(self):
+        """Get user challenges collection"""
+        return self.db['UserChallenge']
+    
     def close_connection(self):
         if self.client:
             self.client.close()

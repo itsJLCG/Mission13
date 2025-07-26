@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { fetchChallenges } from '../../../utils/api'
 import { streakManager } from '../../../utils/streakManager'
 
+
 function formatTime(seconds) {
   const h = Math.floor(seconds / 3600)
   const m = Math.floor((seconds % 3600) / 60)
@@ -92,15 +93,15 @@ function SuccessModal({ open, onClose }) {
       <div className="bg-white rounded-3xl p-10 w-full max-w-sm shadow-2xl flex flex-col items-center relative border border-[#b8f772]/20">
         <div className="absolute transform -translate-x-1/2 -top-8 left-1/2">
           <div className="w-16 h-16 bg-[#b8f772] rounded-full flex items-center justify-center shadow-lg">
-            <span className="text-3xl">🎉</span>
+            <span className="text-3xl">📋</span>
           </div>
         </div>
         <div className="flex flex-col items-center mt-8">
           <span className="text-2xl font-bold text-[#191b40] mb-3" style={{ fontFamily: 'Lexend Deca, sans-serif' }}>
-            Challenge Completed!
+            Challenge Submitted!
           </span>
-          <p className="text-center text-[#191b40] opacity-80 mb-6" style={{ fontFamily: 'Nunito Sans, sans-serif' }}>
-            Great job! You've earned points for making a positive environmental impact.
+          <p className="text-center text-[#191b40] opacity-80 mb-6 leading-relaxed" style={{ fontFamily: 'Nunito Sans, sans-serif' }}>
+            Thanks for engaging in the challenge! Your submission is now under review. Points will be awarded after admin validation.
           </p>
           <button
             className="px-8 py-3 rounded-xl bg-[#b8f772] text-[#191b40] font-bold hover:bg-[#a3e85c] transition-all"
@@ -186,14 +187,14 @@ function getChallengeIcon(title) {
 
 // ChallengeCard
 function ChallengeCard({ challenge, onFeedback, timeLeft, completed }) {
-  const [showPointsAnimation, setShowPointsAnimation] = useState(false)
+  const [showSubmissionAnimation, setShowSubmissionAnimation] = useState(false)
   const difficultyStyle = getDifficultyStyle(challenge.difficulty)
   
   useEffect(() => {
     if (completed) {
-      setShowPointsAnimation(true)
+      setShowSubmissionAnimation(true)
       const timer = setTimeout(() => {
-        setShowPointsAnimation(false)
+        setShowSubmissionAnimation(false)
       }, 3000)
       return () => clearTimeout(timer)
     }
@@ -236,12 +237,14 @@ function ChallengeCard({ challenge, onFeedback, timeLeft, completed }) {
           {challenge.title}
         </h3>
         {completed && (
-          <div className="w-8 h-8 bg-[#fcfbec]/70 backdrop-blur-sm rounded-full flex items-center justify-center">
-            <span className="text-sm text-white">✓</span>
+          <div className="flex items-center justify-center w-8 h-8 bg-orange-500 rounded-full backdrop-blur-sm">
+            <span className="text-sm text-white">⏳</span>
           </div>
         )}
       </div>
-      <p className="text-[#191b40] opacity-60 text-sm mt-1">Today's Climate Action</p>
+      <p className="text-[#191b40] opacity-60 text-sm mt-1">
+        {completed ? 'Pending Validation' : 'Today\'s Climate Action'}
+      </p>
     </div>
   </div>
 
@@ -288,7 +291,6 @@ function ChallengeCard({ challenge, onFeedback, timeLeft, completed }) {
 </div>
 </div>
 
-
         {/* Description */}
         <div className="mb-6">
   <h4 
@@ -304,7 +306,6 @@ function ChallengeCard({ challenge, onFeedback, timeLeft, completed }) {
     {challenge.description}
   </p>
 </div>
-
 
        {/* Impact Section */}
 {challenge.impact && (
@@ -339,15 +340,15 @@ function ChallengeCard({ challenge, onFeedback, timeLeft, completed }) {
 <div className="flex items-center justify-between mt-4">
   {/* Points Display */}
   <div className="flex items-center gap-2">
-    <div className="flex items-center justify-center w-9 h-9 shadow-md bg-gradient-to-br from-yellow-400 to-orange-400 rounded-xl">
+    <div className="flex items-center justify-center shadow-md w-9 h-9 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-xl">
       <span className="text-lg text-white">🏆</span>
     </div>
     <div>
       <p className="text-[11px] font-medium text-[#191b40] opacity-60 leading-tight">
-        Reward Points
+        {completed ? 'Pending Points' : 'Reward Points'}
       </p>
       <p className="text-lg font-bold text-[#191b40]" style={{ fontFamily: 'Poppins, sans-serif' }}>
-        +{challenge.points || 50}
+        {completed ? 'Under Review' : `+${challenge.points || 50}`}
       </p>
     </div>
   </div>
@@ -357,7 +358,7 @@ function ChallengeCard({ challenge, onFeedback, timeLeft, completed }) {
     className={`
       px-10 py-4 rounded-xl font-semibold text-sm transition-all duration-300 shadow-md
       ${completed 
-        ? 'bg-gradient-to-r from-gray-300 to-gray-400 text-gray-600 cursor-not-allowed' 
+        ? 'bg-gradient-to-r from-orange-300 to-orange-400 text-orange-800 cursor-not-allowed' 
         : 'bg-gradient-to-r from-[#b8f772] to-[#a3e85c] text-[#191b40] hover:shadow-lg hover:scale-[1.02] active:scale-95'
       }
     `}
@@ -365,26 +366,65 @@ function ChallengeCard({ challenge, onFeedback, timeLeft, completed }) {
     disabled={completed}
     style={{ fontFamily: 'Lexend Deca, sans-serif' }}
   >
-    {completed ? '✅ Completed' : ' Accept Challenge'}
+    {completed ? '⏳ Under Review' : ' Accept Challenge'}
   </button>
 </div>
 
-
-        {/* Points Animation Overlay */}
-        {showPointsAnimation && (
+        {/* Submission Animation Overlay */}
+        {showSubmissionAnimation && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/90 backdrop-blur-sm rounded-3xl">
             <div className="text-center animate-bounce">
-              <div className="mb-4 text-6xl">🎉</div>
+              <div className="mb-4 text-6xl">📋</div>
               <div className="text-3xl font-bold text-[#191b40] mb-2" style={{ fontFamily: 'Lexend Deca, sans-serif' }}>
-                +{challenge.points || 50} Points!
+                Submitted!
               </div>
-              <div className="text-lg text-[#191b40] opacity-80">Challenge Completed!</div>
+              <div className="text-lg text-[#191b40] opacity-80">Awaiting Validation</div>
             </div>
           </div>
         )}
       </div>
     </div>
   )
+}
+
+const acceptChallenge = async (userEmail, challengeId, description, proofImage) => {
+  try {
+    const response = await fetch('http://localhost:5000/api/user-challenges/accept', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userEmail,
+        challengeId,
+        description,
+        proofImage
+      }),
+    })
+    
+    const data = await response.json()
+    if (!response.ok) {
+      throw new Error(data.message || `HTTP error! status: ${response.status}`)
+    }
+    return data
+  } catch (error) {
+    console.error('Error accepting challenge:', error)
+    throw error
+  }
+}
+
+const checkChallengeStatus = async (userEmail, challengeId) => {
+  try {
+    const response = await fetch(`http://localhost:5000/api/user-challenges/check/${userEmail}/${challengeId}`)
+    const data = await response.json()
+    if (!response.ok) {
+      throw new Error(data.message || `HTTP error! status: ${response.status}`)
+    }
+    return data
+  } catch (error) {
+    console.error('Error checking challenge status:', error)
+    throw error
+  }
 }
 
 export default function DailyChallenge({ onChallengeComplete }) {
@@ -396,29 +436,87 @@ export default function DailyChallenge({ onChallengeComplete }) {
   const [error, setError] = useState(null)
   const [completed, setCompleted] = useState(false)
   const [timerStopped, setTimerStopped] = useState(false)
+  const [userEmail, setUserEmail] = useState('') // Add this to store user email
 
+  // Get user email from localStorage or context
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem('user') || '{}')
+    if (userData.email) {
+      setUserEmail(userData.email)
+    }
+  }, [])
+  
   // Function to fetch a new challenge
-  const fetchNewChallenge = () => {
+  const fetchNewChallenge = async (currentUserEmail = null) => {
     setLoading(true)
     setError(null)
     setTimerStopped(false)
-    fetchChallenges()
-      .then(data => {
-        const ch = Array.isArray(data) ? data[0] : data
-        setChallenge(ch)
-        setTimeLeft(ch?.time_remaining?.total_seconds || 24 * 60 * 60)
+    
+    try {
+      const data = await fetchChallenges()
+      const ch = Array.isArray(data) ? data[0] : data
+      setChallenge(ch)
+      setTimeLeft(ch?.time_remaining?.total_seconds || 24 * 60 * 60)
+      
+      // Use the provided email or the state email
+      const emailToCheck = currentUserEmail || userEmail
+      
+      // Check if user has already accepted this challenge
+      if (emailToCheck && ch?.id) {
+        try {
+          const statusData = await checkChallengeStatus(emailToCheck, ch.id)
+          if (statusData.success && statusData.hasAccepted) {
+            setCompleted(true)
+            setTimerStopped(true)
+          } else {
+            setCompleted(false)
+          }
+        } catch (error) {
+          console.error('Error checking challenge status:', error)
+          setCompleted(false)
+        }
+      } else {
         setCompleted(false)
-        setLoading(false)
-      })
-      .catch(err => {
-        setError('Failed to load challenge.')
-        setLoading(false)
-      })
+      }
+      
+      setLoading(false)
+    } catch (err) {
+      setError('Failed to load challenge.')
+      setLoading(false)
+    }
   }
 
+  // Initial load - wait for userEmail to be set
   useEffect(() => {
-    fetchNewChallenge()
+    const userData = JSON.parse(localStorage.getItem('user') || '{}')
+    if (userData.email) {
+      setUserEmail(userData.email)
+      // Fetch challenge with the email immediately
+      fetchNewChallenge(userData.email)
+    } else {
+      // If no user email, still fetch challenge but without status check
+      fetchNewChallenge()
+    }
   }, [])
+
+  // Re-check challenge status when userEmail changes
+  useEffect(() => {
+    if (userEmail && challenge?.id) {
+      checkChallengeStatus(userEmail, challenge.id)
+        .then(statusData => {
+          if (statusData.success && statusData.hasAccepted) {
+            setCompleted(true)
+            setTimerStopped(true)
+          } else {
+            setCompleted(false)
+          }
+        })
+        .catch(error => {
+          console.error('Error checking challenge status:', error)
+          setCompleted(false)
+        })
+    }
+  }, [userEmail, challenge?.id])
 
   useEffect(() => {
     if (!challenge || timerStopped) return
@@ -432,22 +530,62 @@ export default function DailyChallenge({ onChallengeComplete }) {
     return () => clearInterval(interval)
   }, [timeLeft, challenge, timerStopped])
 
-  const handleProofSubmit = ({ desc, img }) => {
-    setModalOpen(false)
-    setCompleted(true)
-    setTimerStopped(true)
-    
-    const completedChallenge = {
-      challenge,
-      proof: { desc, img },
-      completedAt: new Date(),
+  const handleProofSubmit = async ({ desc, img }) => {
+    try {
+      setModalOpen(false)
+      
+      if (!userEmail) {
+        alert('User not logged in')
+        return
+      }
+      
+      if (!challenge?.id) {
+        alert('No challenge available')
+        return
+      }
+      
+      // Convert image to base64 string if it's a file
+      let proofImageData = null
+      if (img) {
+        const reader = new FileReader()
+        proofImageData = await new Promise((resolve) => {
+          reader.onload = (e) => resolve(e.target.result)
+          reader.readAsDataURL(img)
+        })
+      }
+      
+      // Call API to accept challenge
+      const result = await acceptChallenge(
+        userEmail,
+        challenge.id,
+        desc,
+        proofImageData
+      )
+      
+      if (result.success) {
+        setCompleted(true)
+        setTimerStopped(true)
+        
+        const completedChallenge = {
+          challenge,
+          proof: { desc, img: proofImageData },
+          completedAt: new Date(),
+          userChallenge: result.userChallenge
+        }
+        
+        onChallengeComplete(completedChallenge)
+        
+        setTimeout(() => {
+          setSuccessOpen(true)
+        }, 1500)
+      } else {
+        alert(result.message || 'Failed to accept challenge')
+      }
+      
+    } catch (error) {
+      console.error('Error submitting proof:', error)
+      alert('Failed to submit challenge proof')
     }
-    
-    onChallengeComplete(completedChallenge)
-    
-    setTimeout(() => {
-      setSuccessOpen(true)
-    }, 1500)
   }
 
   if (loading) {
@@ -480,15 +618,15 @@ export default function DailyChallenge({ onChallengeComplete }) {
     <div className="space-y-8">
       {/* Completion Banner */}
       {completed && (
-        <div className="bg-gradient-to-r from-[#b8f772] to-[#a3e85c] rounded-2xl p-6 shadow-lg border border-[#b8f772]/30">
+        <div className="p-6 border shadow-lg bg-gradient-to-r from-orange-400 to-orange-500 rounded-2xl border-orange-400/30">
           <div className="flex items-center gap-4">
-            <div className="text-3xl">🎯</div>
+            <div className="text-3xl">⏳</div>
             <div>
-              <h3 className="text-xl font-bold text-[#191b40]" style={{ fontFamily: 'Lexend Deca, sans-serif' }}>
-                Challenge Completed!
+              <h3 className="text-xl font-bold text-white" style={{ fontFamily: 'Lexend Deca, sans-serif' }}>
+                Challenge Submitted for Review
               </h3>
-              <p className="text-[#191b40] opacity-90">
-                Great job! Come back tomorrow for a new environmental challenge.
+              <p className="text-white opacity-90">
+                Your submission is being reviewed by our admin team. Points will be awarded once validated.
               </p>
             </div>
           </div>

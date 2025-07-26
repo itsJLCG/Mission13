@@ -32,7 +32,7 @@ def get_ai_response(prompt: str) -> str:
             response.raise_for_status()
             return response.json()["choices"][0]["message"]["content"]
         except Exception as e:
-            print(f"⚠️ API key failed: {api_key[:6]}... — {e}")
+            print(f"⚠️ API key failed: {api_key[:20]}... — {e}")
             continue
 
     raise RuntimeError("All OpenRouter API keys failed.")
